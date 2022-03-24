@@ -8,3 +8,8 @@ GA - veľkosť populácie, gény
 NS - zmeniť rozsah uhlu -pi, +pi, zmena podmienok natočenia
 
 škálovať robota - lepšia vizualizácia
+
+ 24.3.
+pokutovanie/odmena - pri zákrute, približovanie k checkpointu
+nebrať aktualne súradnice ale 5 súradnic do zadu
+pridanie lúčov lidaru
