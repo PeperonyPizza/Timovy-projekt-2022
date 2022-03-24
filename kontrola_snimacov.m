@@ -10,6 +10,8 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
             
             velkost_mapy = size(cesta);
             
+            max_hodnota = 11;
+            
             % Osetrenie aby sa snimace nenastavili mimo mapy
             if min(lavy_snimac) >= 1 && max(pravy_snimac) <= 150
                 
@@ -28,7 +30,7 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
                             lidar_distance(2,1) = j;
                         end
                     elseif j == 10 && lidar_distance(2,1) == 0
-                            lidar_distance(2,1) = 11;
+                            lidar_distance(2,1) = max_hodnota;
                     else
                         lidar_distance(2,1) = 0;
                     end
@@ -40,7 +42,7 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
                             lidar_distance(2,3) = j;
                         end
                     elseif j == 10 && lidar_distance(2,3) == 0
-                            lidar_distance(2,3) = 11;
+                            lidar_distance(2,3) = max_hodnota;
                     else
                         lidar_distance(2,3) = 0;
                     end
@@ -52,9 +54,9 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
                             lidar_distance(1,2) = j;
                         end
                     elseif j == 10 && lidar_distance(1,2) == 0
-                            lidar_distance(1,2) = 11;
+                            lidar_distance(1,2) = max_hodnota;
                     else
-                        
+                        lidar_distance(1,2) = 0;
                     end
                     %%%%
                     if pozicia(1,1)+1+j >= velkost_mapy(1)
@@ -64,7 +66,7 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
                             lidar_distance(3,2) = j;
                         end
                     elseif j == 10 && lidar_distance(3,2) == 0
-                            lidar_distance(3,2) = 11;
+                            lidar_distance(3,2) = max_hodnota;
                     else
                         lidar_distance(3,2) = 0;
                     end
@@ -76,7 +78,7 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
                             lidar_distance(1,1) = j;
                         end
                     elseif j == 10 && lidar_distance(1,1) == 0
-                            lidar_distance(1,1) = 11;
+                            lidar_distance(1,1) = max_hodnota;
                     else
                         lidar_distance(1,1) = 0;
                     end
@@ -88,9 +90,9 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
                             lidar_distance(3,1) = j;
                         end
                     elseif j == 10 && lidar_distance(3,1) == 0
-                            lidar_distance(3,1) = 11;
+                            lidar_distance(3,1) = max_hodnota;
                     else 
-                        lidar_distance(3,1) = 11;
+                        lidar_distance(3,1) = 0;
                     end
                     %%%%
                     if pozicia(1,1)-1-j <= 0 || pozicia(1,2)+1+j >= velkost_mapy(2)
@@ -100,7 +102,7 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
                             lidar_distance(1,3) = j;
                         end
                     elseif j == 10 && lidar_distance(1,3) == 0
-                            lidar_distance(1,3) = 11;
+                            lidar_distance(1,3) = max_hodnota;
                     else
                         lidar_distance(1,3) = 0;
                     end
@@ -112,7 +114,7 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
                             lidar_distance(3,3) = j;
                         end
                     elseif j == 10 && lidar_distance(3,3) == 0
-                            lidar_distance(3,3) = 11;
+                            lidar_distance(3,3) = max_hodnota;
                     else
                         lidar_distance(3,3) = 0;
                     end  
@@ -152,4 +154,6 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
             lidar = lidar_distance(:);
             lidar(5) = [];
 end
+
+
 
