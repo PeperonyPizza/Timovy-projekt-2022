@@ -149,7 +149,8 @@ function [snimace, lidar] = kontrola_snimacov(pozicia,cesta,orientacia)
             snimace = matica(:);
             snimace(5) = [];
             
+            
             lidar = lidar_distance(:);
-            lidar(5) = [];
+            lidar(5) = [0];
 end
 
