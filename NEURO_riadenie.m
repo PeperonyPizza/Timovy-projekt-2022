@@ -1,7 +1,7 @@
 clc
 clear
 addpath("genetic")
-numgen = 100;  % pocet generacii
+numgen = 50;  % pocet generacii
 lpop = 25;	   % pocet chromozonov v populacii
 lstring = 200; % pocet genov v chromozone (90+100+10)
 M = 1;         % maximalny prehladavaci priestor
@@ -14,7 +14,7 @@ start_line = [36:43; collum];
 %x y, 36-43	75, 75	29-36, 109-116	75, 75	114-121
 min_pp=inf;
 
-kroky = 800;
+kroky = 400;
 
 trasa_num = 1;      %Zatial funkčná trasa 1 a celkom funkčná trasa 3
 
@@ -50,6 +50,7 @@ Delta = Space(2,:) / 50; % krok aditivnej mutacie
 
 Pop = genrpop(lpop,Space);
 min_kroky=kroky;
+predchadzajuce_kroky = zeros(2,10); %pozerame predchadzajucihc (2,x) x krokov
 % Main cyklus
 for gen = 1:numgen
     
@@ -98,7 +99,10 @@ for gen = 1:numgen
         
         checkpoints_pom=checkpoints;
         neprejdenie_ch = 0;
-        
+
+        checkpoint_pomoc = 4;
+        old_pokuta_vzdialenost_od_cp = 0;
+
        for k = 1:kroky
             predosla_orientacia = orientacia;
             draha(pozicia(1,1),pozicia(1,2)) = draha(pozicia(1,1),pozicia(1,2)) + 1;
@@ -124,36 +128,53 @@ for gen = 1:numgen
                 pokuta_vybocenie = -0.1;
             end
             
-            %% prechod cez checkpoint
-            for n=1:length(checkpoints)
-                if sum(checkpoints(1, n) == riadok_draha & checkpoints(2, n) == stlpec_draha) == 1 
-                    bonus_checkpoint=-50;
-                    if (checkpoints(1, n) == checkpoints_pom(1, n)) && (checkpoints(2, n) == checkpoints_pom(2, n) && trasa_num~=1)
-                        %Odmena za prejdenie checkpointu len raz, vymaže sa
-                        %jeho suradnica v maske checkpoints_pom
-                        checkpoints_pom(1, n) = 0;
-                        checkpoints_pom(2, n) = 0;
-                        neprejdenie_ch = 0;
-                    elseif(trasa_num~=1)
-                        %Veľmi veľká pokuta pri opätovnom prejdení
-                        %checkpointu
-                        neprejdenie_ch = neprejdenie_ch;
-                        bonus_checkpoint = neprejdenie_ch+100000;
+          pokuta_ciklus = 0;
+            prejdenie_cp = 0;
+            vacsia_vzdialenost = 1;
+
+            %pokuta ak sa zacikli
+            for j = 1:length(predchadzajuce_kroky)
+                if (predchadzajuce_kroky(1,j) == pozicia(1,1)) && (predchadzajuce_kroky(2,j) == pozicia(1,2))
+                    pokuta_ciklus = 10000;
+                end
+            end
+
+            %prepisovanie predchadajucich korokov
+            for j = 1:(length(predchadzajuce_kroky)-1)
+                predchadzajuce_kroky(1,j) = predchadzajuce_kroky(1,j+1);
+                predchadzajuce_kroky(2,j) = predchadzajuce_kroky(2,j+1);
+            end
+            %ulozenie aktualnej polohy do predchadzajuce kroky
+            predchadzajuce_kroky(1,length(predchadzajuce_kroky)) = pozicia(1,1);
+            predchadzajuce_kroky(2,length(predchadzajuce_kroky)) = pozicia(1,2);
+            
+            %checkpoint
+            xdif = abs(pozicia(1,2)-checkpoints(2,checkpoint_pomoc));
+            ydif = abs(pozicia(1,1)-checkpoints(1,checkpoint_pomoc));
+            pokuta_vzdialenost_od_cp = sqrt((xdif)^2+(ydif)^2);
+            
+            %ak sa priblizi k nasledujucemu checkpointu 
+            %nedostane pokutu za vzdialenost
+            if old_pokuta_vzdialenost_od_cp > pokuta_vzdialenost_od_cp
+                vacsia_vzdialenost = 0;
+            end
+            
+            old_pokuta_vzdialenost_od_cp = pokuta_vzdialenost_od_cp;
+
+            %bonus ak prejde cez checkpoint v poradi
+            for j = checkpoint_pomoc-3:checkpoint_pomoc+4
+                if (pozicia(1,2) == checkpoints(2,j)) && (pozicia(1,1) == checkpoints(1,j))
+                    prejdenie_cp = 1;
+                    checkpoint_pomoc = checkpoint_pomoc + 8;
+                    if checkpoint_pomoc > length(checkpoints)
+                        checkpoint_pomoc = 4;
                     end
-                        
-                elseif(trasa_num~=1)
-                    %Malá pokuta ak robot v danom cykle neprejde cez
-                    %checkpoint
-                    neprejdenie_ch = neprejdenie_ch+2;
-                    bonus_checkpoint = neprejdenie_ch;
-                else
-                    bonus_checkpoint = 0;
                 end
             end
 
             aktualna_pozicia = cesta(pozicia(1,1),pozicia(1,2));
 
-            pp = 1 + pp + pokuta + pokuta_vybocenie + 10*double(aktualna_pozicia) + bonus_checkpoint ;
+            pp = 1 + pp + pokuta + pokuta_vybocenie + 10*double(aktualna_pozicia) + pokuta_ciklus + 5 * pokuta_vzdialenost_od_cp * vacsia_vzdialenost - prejdenie_cp * 5000;
             for index = 1:9
                 
                 if (double(lidar(index)) == 11)
