@@ -16,7 +16,7 @@ min_pp=inf;
 
 kroky = 800;
 
-trasa_num = 5;
+trasa_num = 1;
 
 [start,cesta] = vyber_trasy(trasa_num);
 
@@ -81,9 +81,11 @@ for gen = 1:numgen
             snimace = kontrola_snimacov(pozicia,cesta,orientacia);
             snimace(end+1) = predosla_zmena;
             
+            obraz_z_kameri = dash_cam(start,cesta,checkpoints, pozicia, orientacia);
+            %%
             natocenie = neuronova_siet(W1,W2,W3,snimace);
           
-            orientacia = aktualizacia_orientacia(natocenie,orientacia);
+           % orientacia = aktualizacia_orientacia(natocenie,orientacia);
             
             [pokuta,posledna_zmena] = kontrola_zmeny_orientaacie(predosla_orientacia,orientacia,predosla_zmena);
             
@@ -111,8 +113,9 @@ for gen = 1:numgen
             pp = 1 + pp + pokuta + pokuta_vybocenie + 10*double(aktualna_pozicia) + 0.5 * sum(double(snimace(1:9))) + bonus_checkpoint ;
         
         end
- %%
-        
+ 
+ 
+
 
         Fit(i) = pp;
         if min_pp>pp
