@@ -1,42 +1,36 @@
 clc
 clear
 addpath("genetic")
-numgen = 50;  % pocet generacii
+numgen = 500;  % pocet generacii
 lpop = 25;	   % pocet chromozonov v populacii
 lstring = 200; % pocet genov v chromozone (90+100+10)
 M = 1;         % maximalny prehladavaci priestor
 
 
 collum = [75 75 75 75 75 75 75 75];
+one = ones(1,8);
 start_line = [36:43; collum];
 % start = [39 74];
 
 %x y, 36-43	75, 75	29-36, 109-116	75, 75	114-121
 min_pp=inf;
 
-kroky = 400;
+kroky = 800;
 
-trasa_num = 1;      %Zatial funkčná trasa 1 a celkom funkčná trasa 3
+trasa_num = 2;      %Zatial funkčná trasa 1 a celkom funkčná trasa 3
 
 if(trasa_num == 1)  %stvorec
-    checkpoints = cat(2,[collum; 29:36],[108:115; collum],[collum; 114:121]);
+    checkpoints = cat(2,[collum; 29:36],[108:115; collum],[collum; 114:121],[35:42;collum]);
 elseif(trasa_num == 2)  %race track
-    collum1 = [100 100 100 100 100 100 100 100];
-    collum2 = [40 40 40 40 40 40 40 40];
-    collum3 = [39 39 39 39 39 39 39 39];
-    collum4 = [52 51 50 49 48 47 46 45];
-    checkpoints = cat(2,[collum; 29:36],[108:115; collum],[collum; 114:121], [22:29; collum1], [collum2; 126:133], [8:15; collum3], [17:24; collum4]);
+    checkpoints = cat(2,[one*25;46:53],[8:15;one*33],[one*37;14:21],[one*87;29:36],[one*117;2:9], ...
+                        [133:140;one*41],[108:115;one*65],[108:115;one*120],[one*77;113:120], ...
+                        [one*50;126:133],[21:28;one*110],[35:42;collum]);
 elseif(trasa_num == 3) %kruh
-    collum1 = [111 110 109 108 107 106 105 104];
-    collum2 = [40 40 40 40 40 40 40 40];
-    collum3 = [92 92 92 92 92 92 92 92];
-    collum4 = [67 67 67 67 67 67 67 67];
-    checkpoints = cat(2,[collum; 21:28],[119:126; collum],[collum; 124:131], [35:42;collum1], [27:34; collum3]);   %trasa = 1
+    checkpoints = cat(2,[collum; 21:28],[119:126; collum],[collum; 124:131], [25:32;collum]);  
 elseif(trasa_num == 4)  %osmicka
-%     checkpoints = cat(2,[collum; 29:36],[108:115; collum],[collum; 114:121]);
-    checkpoints = cat(2,[collum; 9:16],[90:97; collum],[collum; 131:138]); 
+    checkpoints = cat(2,[39:46;one*45],[collum; 9:16],[85:92; one*64],[collum; 131:138],[43:50;one*113]); 
 elseif(trasa_num == 5)  %sestuholnik
-    checkpoints = cat(2,[collum; 29:36],[108:115; collum],[collum; 114:121]);
+    checkpoints = cat(2,[collum; 25:32],[120:127; collum],[collum; 117:124],[22:29;collum]);
 end
 checkpoints_pom = checkpoints;
 
@@ -130,12 +124,12 @@ for gen = 1:numgen
             
           pokuta_ciklus = 0;
             prejdenie_cp = 0;
-            vacsia_vzdialenost = 1;
+            mansia_vzdialenost = 0;
 
             %pokuta ak sa zacikli
             for j = 1:length(predchadzajuce_kroky)
                 if (predchadzajuce_kroky(1,j) == pozicia(1,1)) && (predchadzajuce_kroky(2,j) == pozicia(1,2))
-                    pokuta_ciklus = 10000;
+                    pokuta_ciklus = pokuta_ciklus + 10000;
                 end
             end
 
@@ -154,9 +148,9 @@ for gen = 1:numgen
             pokuta_vzdialenost_od_cp = sqrt((xdif)^2+(ydif)^2);
             
             %ak sa priblizi k nasledujucemu checkpointu 
-            %nedostane pokutu za vzdialenost
+            %dostane bonus
             if old_pokuta_vzdialenost_od_cp > pokuta_vzdialenost_od_cp
-                vacsia_vzdialenost = 0;
+                mansia_vzdialenost = 1;
             end
             
             old_pokuta_vzdialenost_od_cp = pokuta_vzdialenost_od_cp;
@@ -172,27 +166,27 @@ for gen = 1:numgen
                 end
             end
 
-            aktualna_pozicia = cesta(pozicia(1,1),pozicia(1,2));
+%             aktualna_pozicia = cesta(pozicia(1,1),pozicia(1,2));
 
-            pp = 1 + pp + pokuta + pokuta_vybocenie + 10*double(aktualna_pozicia) + pokuta_ciklus + 5 * pokuta_vzdialenost_od_cp * vacsia_vzdialenost - prejdenie_cp * 5000;
-            for index = 1:9
-                
-                if (double(lidar(index)) == 11)
-                    if (index == 4 || index == 5 || index == 6 || index == 7 || index == 8 )
-                        pokutaAkt = -0.1; %záporná pokuta ak je lidar 11 a predná časť robota + boky
-                    else   %do úvahy sa neberie zadná časť robota (nulová pokuta)
-                        if(trasa_num == 1)  %toto treba spravit lepsie
-                            pokutaAkt = 5 * (double(lidar(index)));
-                        else
-                            pokutaAkt = 0 * (double(lidar(index)));
-                        end
-                    end
-                else       %pokutovanie pri hodnote lidaru menšej ako 11
-                    pokutaAkt = 5*(1 - double(lidar(index))/10);
-                end
- 
-               pp = pp + pokutaAkt;
-            end
+            pp = 1 + pp + pokuta + pokuta_vybocenie + pokuta_ciklus + pokuta_vzdialenost_od_cp - 100 * mansia_vzdialenost - prejdenie_cp * 5000;
+%             for index = 1:9
+%                 
+%                 if (double(lidar(index)) == 11)
+%                     if (index == 4 || index == 5 || index == 6 || index == 7 || index == 8 )
+%                         pokutaAkt = -0.1; %záporná pokuta ak je lidar 11 a predná časť robota + boky
+%                     else   %do úvahy sa neberie zadná časť robota (nulová pokuta)
+%                         if(trasa_num == 1)  %toto treba spravit lepsie
+%                             pokutaAkt = 5 * (double(lidar(index)));
+%                         else
+%                             pokutaAkt = 0 * (double(lidar(index)));
+%                         end
+%                     end
+%                 else       %pokutovanie pri hodnote lidaru menšej ako 11
+%                     pokutaAkt = 5*(1 - double(lidar(index))/10);
+%                 end
+%  
+%                pp = pp + pokutaAkt;
+%             end
 
         end
  %%
