@@ -53,6 +53,7 @@ r_d = [pozicia(1) + round(vysek_sirka/2,0) - 1, pozicia(2)];
 l_u = [pozicia(1) - round(vysek_sirka/2,0), pozicia(2) + vysek_vyska];
 %right up corner
 r_u = [pozicia(1) + round(vysek_sirka/2,0) - 1, pozicia(2) + vysek_vyska];
+rohy =[l_d; r_d; l_u; r_u];
 
 %Tu si vyratam kde sa nachadzaju rohy obdlznika po rotacii 
 %left down corner rotated
@@ -61,6 +62,16 @@ r_d_r = rotacia_stvorca(r_d, pozicia, uhol);
 l_u_r = rotacia_stvorca(l_u, pozicia, uhol);
 r_u_r = rotacia_stvorca(r_u, pozicia, uhol);
 
+rohy_r = [l_d_r; r_d_r; l_u_r; r_u_r];
+max_coordinates_val = max(rohy_r,[],1);
+min_coordinates_val = min(rohy_r,[],1);
+rectangle_crop_coordinates = [min(rohy_r,[],1),max(rohy_r,[],1)];
+% rectangle_crop_coordinates = [min(rohy,[],1),max(rohy,[],1)];
+
+croped_image = imcrop(cesta,[rectangle_crop_coordinates]);
+imshow(croped_image*255)
+rotated_croped_image = imrotate(croped_image,uhol,'bilinear');
+imshow(rotated_croped_image*255)
 %spojim si body pomocou Bresenhamovho algoritmu a vytvorim nove ohranicenie
 [x,y] = bresenham(l_d_r, r_d_r);
 spodna_hranica = [x,y];

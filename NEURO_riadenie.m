@@ -81,7 +81,7 @@ for gen = 1:numgen
             snimace = kontrola_snimacov(pozicia,cesta,orientacia);
             snimace(end+1) = predosla_zmena;
             %                                                           uhol
-            obraz_z_kameri = dash_cam(start,cesta,checkpoints, pozicia, pi);
+            obraz_z_kameri = dash_cam(start,cesta,checkpoints, pozicia, 30);
             %%
             natocenie = neuronova_siet(W1,W2,W3,snimace);
           
