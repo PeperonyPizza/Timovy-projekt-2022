@@ -26,8 +26,8 @@ end
 
 % vysek z mapy na zaklade orientacie a polohy
 % musia to byt neparne hodnoty
-vysek_sirka =21;
-vysek_vyska =31;
+vysek_sirka =31;
+vysek_vyska =21;
 % vysek = zeros([vysek_sirka vysek_vyska]);
 
 %% vypocet pozici pre Bresenham line algoritmus
@@ -63,10 +63,17 @@ min_coordinates_val = min(rohy_r,[],1);
 rectangle_crop_coordinates = [min(rohy_r,[],1),max(rohy_r,[],1)];
 % rectangle_crop_coordinates = [min(rohy,[],1),max(rohy,[],1)];
 
+tiledlayout(3,1)
+
+% Top plot
+
 croped_image = imcrop(cesta,[rectangle_crop_coordinates]);
-% imshow(croped_image*255)
+nexttile
+imshow(croped_image*255)
 rotated_croped_image = imrotate(croped_image,uhol,'bilinear');
-% imshow(rotated_croped_image*255)
+
+nexttile
+imshow(rotated_croped_image*255)
 cropped_image_size = size(rotated_croped_image);
 
 crop_x_coordinate = round((cropped_image_size(2) - vysek_sirka)/2);
@@ -77,9 +84,11 @@ rectangle_mask = [crop_x_coordinate,crop_y_coordinate,...
 
 final_image = imcrop(rotated_croped_image,rectangle_mask);
 
+final_image = imresize(final_image, 10);
+nexttile
 imshow(final_image*255)
 
-pause(0.05)
+pause(0.01)
 
 %spojim si body pomocou Bresenhamovho algoritmu a vytvorim nove ohranicenie
 % [x,y] = bresenham(l_d_r, r_d_r);
