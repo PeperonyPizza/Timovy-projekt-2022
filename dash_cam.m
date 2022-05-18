@@ -86,10 +86,11 @@ rectangle_mask = [crop_x_coordinate,crop_y_coordinate,...
 
 final_image = imcrop(rotated_croped_image,rectangle_mask);
 
-% figure(2)
 final_image = imresize(final_image, 10);
-% nexttile
-% imshow(final_image*255)
+
+figure(2)%
+% nexttile%
+imshow(final_image*255)%
 
 % %https://stackoverflow.com/questions/32447767/how-to-warp-an-image-into-a-trapezoidal-shape-in-matlab
 % 
@@ -116,7 +117,7 @@ final_image = imresize(final_image, 10);
 % % sig=4;
 % % y2 = gaussmf(x,[sig,mu]); 
 % % imshow(image)
-% pause(0.01)
+pause(0.01)
 
 
 

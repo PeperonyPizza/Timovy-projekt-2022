@@ -17,6 +17,6 @@ trasa_num = 1;
 
 % Main cyklus
 
-for i=0:360
-    rotacia_obrazu(start,cesta,checkpoints, [39 74], i);
+for i=0:4:360
+    rotacia_obrazu_v1(start,cesta,checkpoints, [74 39], i);
 end
