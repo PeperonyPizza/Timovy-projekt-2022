@@ -1,7 +1,7 @@
 clc
 clear
 addpath("genetic")
-numgen = 3500; % pocet generacii
+numgen = 500; % pocet generacii
 lpop = 25;	   % pocet chromozonov v populacii
 lstring = 210; % pocet genov v chromozone (90+100+10)200
 M = 1;         % maximalny prehladavaci priestor
@@ -15,23 +15,36 @@ start_line = [36:43; collum];
 %x y, 36-43	75, 75	29-36, 109-116	75, 75	114-121
 min_pp=inf;
 
-kroky = 650;
-
-trasa_num = 2;      %Voľba trasy
-pocetSpusteni = 1;
+%%%%%% NASTAVENIE MAPY %%%%%%
+trasa_num = 1;      %vyber mapy: 1 = stvorec
+                    %            2 = race track
+                    %            3 = kruh
+                    %            4 = osmicka
+                    %            5 = sestuholnik
+                    %            6 = race track_2
+pocetSpusteni = 1;  %pre dalsie spustenie sa vygeneruje nova populacia
+kroky = 450;        %dt
+%%%%%% NASTAVENIE POHIBLIVYCH PREKAZOK %%%%%%  (0 alebo 1)
+prekazky_zapnute = 1;      %vyber mapy: 0 = generovanie prekazok vypnute
+                           %            1 = generovanie prekazok vypnute
 
 if(trasa_num == 1)  %stvorec
     checkpoints = cat(2,[collum; 29:36],[108:115; collum],[collum; 114:121],[35:42;collum]);
+    prekazky = [80 32 112 75 75 118 39 80];
 elseif(trasa_num == 2)  %race track
     checkpoints = cat(2,[one*25;46:53],[8:15;one*33],[one*37;14:21],[one*87;29:36],[one*117;2:9], ...
                         [133:140;one*41],[108:115;one*65],[108:115;one*120],[one*77;113:120], ...
                         [one*50;126:133],[21:28;one*110],[35:42;collum]);
+    prekazky = [25 48 37 18 117 6 111 65 77 115 25 110];
 elseif(trasa_num == 3) %kruh
     checkpoints = cat(2,[collum; 21:28],[119:126; collum],[collum; 124:131], [25:32;collum]);  
+    prekazky = [75 26 122 75 75 126 24 75];
 elseif(trasa_num == 4)  %osmicka
     checkpoints = cat(2,[39:46;one*45],[collum; 9:16],[93:100; one*37],[85:92; one*64],[102:109; one*88],[collum; 131:138],[43:50;one*113], [51:58;one*87]); 
+    prekazky = [41 45 94 37 104 88 45 113];
 elseif(trasa_num == 5)  %sestuholnik
     checkpoints = cat(2,[collum; 25:32],[120:127; collum],[collum; 117:124],[22:29;collum]);
+    prekazky = [75 26 122 75 75 119 24 75];
 elseif(trasa_num == 6)  %race track_2
     collum4 = [39 39 39 39 39 39 39 39]; collum12 = [137 136 135 134 133 132 131 131]; collum13 = [63 63 63 63 63 63 63 63];
     collum3 = [52 51 50 49 48 47 46 46]; collum11 = [13 13 13 13 13 13 13 13]; collum14 = [87 87 87 87 87 87 87 87];
@@ -44,12 +57,12 @@ elseif(trasa_num == 6)  %race track_2
     collum25 = [108 108 108 108 108 108 108 108];
     collum26 = [102 102 101 100 99 98 97 96]; collum27 = [39 39 38 37 36 35 34 33];
 
-checkpoints = cat(2, [34:40,40; collum1], [17:23,23; collum3], [13,13:18,18; 16,16:21,21], [collum6;19,19:24,24] ...
+    checkpoints = cat(2, [34:40,40; collum1], [17:23,23; collum3], [13,13:18,18; 16,16:21,21], [collum6;19,19:24,24] ...
         , [collum8; 29:36], [collum10; 2:9], ...
         [collum12; 29:35,35], [108:115; collum13], [108:115; collum14], ...
         [108:115; collum16],[collum18;136:143], [collum20;126:133], ...
         [collum22; 139:146],[21:28; collum24]);
-
+    prekazky = [36 60 14 17 119 4 110 63 105 138 23 120];
 
 end
 checkpoints_pom = checkpoints;
@@ -68,7 +81,8 @@ if trasa_num == 2 || trasa_num == 6 %pre najzložitejšie trasy sa použije výs
 else
     Pop = genrpop(lpop,Space); 
 end
-
+% Pop = load('pop');%genrpop(lpop,Space);
+% Pop = Pop.Pop;
 min_kroky=kroky;
 predchadzajuce_kroky = zeros(2,10); %pozerame predchadzajucihc (2,x) x krokov
 % Main cyklus
@@ -80,6 +94,16 @@ for gen = 1:numgen
 
     checkpoints_pom=checkpoints;
     for i = 1:lpop
+
+    %%% PREKAZKY
+    if prekazky_zapnute == 1
+        trasa_prekazky = zeros(150,150);
+        new_pohybujuce_prekazky = prekazky;
+        kolizie_s_prekazkamy = 0;
+    end
+    
+    %%%
+
     %=====================================================================>
     %                      VYTVORENIE MATIC W1,W2,W3
     %=====================================================================>
@@ -134,6 +158,17 @@ W1 = []; W2 = []; W3 = [];
         addY45 = 0;
 
        for k = 1:kroky
+
+            %%% PREKAZKY
+            if prekazky_zapnute == 1
+                new_pohybujuce_prekazky = pohybujuce_prekazky(cesta,new_pohybujuce_prekazky,pozicia);
+                for p = 1:2:length(new_pohybujuce_prekazky)
+                    cesta(new_pohybujuce_prekazky(p),new_pohybujuce_prekazky(p+1)) = 1;%nastavenie prekazky
+                end
+            end
+            
+            %%%
+
             predosla_orientacia = orientacia;
             draha(pozicia(1,1),pozicia(1,2)) = draha(pozicia(1,1),pozicia(1,2)) + 1;
             
@@ -212,6 +247,19 @@ W1 = []; W2 = []; W3 = [];
                     end
                 end
             end
+
+            %%% PREKAZKY
+            if prekazky_zapnute == 1
+                for p = 1:2:length(new_pohybujuce_prekazky)
+                if (new_pohybujuce_prekazky(p) == pozicia(1) && new_pohybujuce_prekazky(p+1) == pozicia(2))
+                    kolizie_s_prekazkamy = kolizie_s_prekazkamy + 1;
+                end
+                trasa_prekazky(new_pohybujuce_prekazky(p),new_pohybujuce_prekazky(p+1)) = trasa_prekazky(new_pohybujuce_prekazky(p),new_pohybujuce_prekazky(p+1))+1;
+                cesta(new_pohybujuce_prekazky(p),new_pohybujuce_prekazky(p+1)) = 0;%vynulovanie prekazky
+                end
+            end
+            
+            %%%
 
 %             aktualna_pozicia = cesta(pozicia(1,1),pozicia(1,2));
 
