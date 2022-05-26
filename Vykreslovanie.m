@@ -1,4 +1,4 @@
-function [] = Vykreslovanie(riadok_cesta,stlpec_cesta,pozicia,draha,start,cesta,checkpoints)
+function [] = Vykreslovanie(riadok_cesta,stlpec_cesta,pozicia,draha,start,cesta,checkpoints, spustenie)
 
 
 % vytvorenie prostredia
@@ -37,7 +37,7 @@ prostredie(pozicia(1,1),pozicia(1,2),2) = 0;
 prostredie(pozicia(1,1),pozicia(1,2),3) = 255;
 
 % Zobrazenie prostredia 
-figure(2)
+figure(spustenie+20)
 imshow(uint8(prostredie))
 end
 

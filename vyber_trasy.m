@@ -18,6 +18,9 @@ switch trasa_num
     case 5    
         start = [28 74];
         cesta = imread('trasa_sestuholnik.bmp');
+    case 6
+        start = [39 74];
+        cesta = imread('race_track_2.bmp');
 end
 
 cesta = (cesta(:,:,1) + cesta(:,:,2) + cesta(:,:,3)) ./ (255);

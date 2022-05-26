@@ -37,13 +37,13 @@ function [riadok_draha,stlpec_draha, subY21,addY41, subX12, addX14, subX52,addX5
             
             % Pohyb robota smerom (2,1)
             elseif orientacia == 1
-%                 addY41 = 0;
-%                 subX12 = 0;
-%                 addX14 = 0;
-%                 subX52 = 0;
-%                 addX54 = 0;
-%                 subY25 = 0;
-%                 addY45 = 0;
+                addY41 = 0;
+                subX12 = 0;
+                addX14 = 0;
+                subX52 = 0;
+                addX54 = 0;
+                subY25 = 0;
+                addY45 = 0;
                 riadok_draha = pozicia(1,1)-subY21;
                 stlpec_draha = pozicia(1,2)-1;
 
@@ -55,13 +55,13 @@ function [riadok_draha,stlpec_draha, subY21,addY41, subX12, addX14, subX52,addX5
 
             % Pohyb robota smerom (1,2)    
             elseif orientacia == 3
-%                 subY21 = 0;
-%                 addY41 = 0;
-%                 addX14 = 0;
-%                 subX52 = 0;
-%                 addX54 = 0;
-%                 subY25 = 0;
-%                 addY45 = 0;
+                subY21 = 0;
+                addY41 = 0;
+                addX14 = 0;
+                subX52 = 0;
+                addX54 = 0;
+                subY25 = 0;
+                addY45 = 0;
                 riadok_draha = pozicia(1,1)-1;
                 stlpec_draha = pozicia(1,2)-subX12;
 
@@ -73,13 +73,13 @@ function [riadok_draha,stlpec_draha, subY21,addY41, subX12, addX14, subX52,addX5
 
             % Pohyb robota smerom (1,4)    
             elseif orientacia == 5
-%                 subY21 = 0;
-%                 addY41 = 0;
-%                 subX12 = 0;
-%                 subX52 = 0;
-%                 addX54 = 0;
-%                 subY25 = 0;
-%                 addY45 = 0;
+                subY21 = 0;
+                addY41 = 0;
+                subX12 = 0;
+                subX52 = 0;
+                addX54 = 0;
+                subY25 = 0;
+                addY45 = 0;
                 riadok_draha = pozicia(1,1)-1;
                 stlpec_draha = pozicia(1,2)+addX14;
             % Pohyb robota smerom (1,5)    

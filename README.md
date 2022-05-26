@@ -8,15 +8,4 @@ GA - veľkosť populácie, gény
 NS - zmeniť rozsah uhlu -pi, +pi, zmena podmienok natočenia
 
 škálovať robota - lepšia vizualizácia
-
-
-
-///////dokumentácia
-
-24.3.
-
-pokutovanie/odmena - pri zákrute, približovanie k checkpointu
-nebrať aktualne súradnice ale 5 súradnic do zadu
-pridanie lúčov lidaru
-
-kamera
+![Lidar](https://user-images.githubusercontent.com/83547665/159054342-d112f917-7767-4cbb-9793-01215b367948.png)
