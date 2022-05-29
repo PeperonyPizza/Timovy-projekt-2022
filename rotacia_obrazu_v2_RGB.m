@@ -1,4 +1,4 @@
-function [] = rotacia_obrazu_v2(start,cesta,checkpoints, pozicia, uhol)
+function [final_image] = rotacia_obrazu_v2_RGB(start,cesta,checkpoints, pozicia, uhol, step)
 % vytvorenie prostredia
 [sirka,vyska] = size(cesta);
 
@@ -61,34 +61,34 @@ rectangle_crop_coordinates_2 = [min(rohy_r,[],1),w,h];
 
 %%
 %origo prostredie
-tiledlayout(4,2)
-nexttile([4,1])
+% tiledlayout(4,2)
+% nexttile([4,1])
 
-imshow(prostredie)
-title('Povodne prostredie')
+% imshow(prostredie)
+% title('Povodne prostredie')
 %%
 croped_image = imcrop(prostredie,rectangle_crop_coordinates_1);
 %cropnuty obrazok
-nexttile
-% imshow(croped_image*255)
-imshow(croped_image)
-title('Cropnuty obrazok (vozidlo v strede)')
+% nexttile
+% % imshow(croped_image*255)
+% imshow(croped_image)
+% title('Cropnuty obrazok (vozidlo v strede)')
 
 
 
 %%
 croped_image = imcrop(prostredie,rectangle_crop_coordinates_2);
 %cropnuty obrazok
-nexttile
-imshow(croped_image)
-title('Cropnuty obrazok')
+% nexttile
+% imshow(croped_image)
+% title('Cropnuty obrazok')
 
 %%
-nexttile
+% nexttile
 %orotovany obrazok
 rotated_croped_image = imrotate(croped_image,uhol,'bilinear');
-imshow(rotated_croped_image)
-title('Cropnuty obrazok orotovany okolo vozidla')
+% imshow(rotated_croped_image)
+% title('Cropnuty obrazok orotovany okolo vozidla')
 
 %%
 
@@ -101,10 +101,17 @@ crop_y_coordinate = round((cropped_image_size(1) - vysek_vyska)/2);
 rectangle_mask = [crop_x_coordinate,crop_y_coordinate,...
                   vysek_sirka, vysek_vyska];
 
-final_image = imcrop(rotated_croped_image,rectangle_mask);
+image = imcrop(rotated_croped_image,rectangle_mask);
 
-final_image = imresize(final_image, 1);
-nexttile
+image_size = size(image);
+x_step=floor(image_size(1)/step);
+y_step=floor(image_size(2)/step);
+
+for (i=1:1:x_step)
+    for (j=1:1:y_step)
+        final_image(i,j,:)=image(i*step,j*step,:);
+    end
+end
 imshow(final_image)
 title('Vysledny obrazok')
 

@@ -1,19 +1,23 @@
-function [] = rotacia_obrazu_v1(start,cesta,checkpoints, pozicia, uhol)
+function [] = rotacia_obrazu_v1(start,cesta,checkpoints, pozicia, uhol,step)
 % vytvorenie prostredia
 [sirka,vyska] = size(cesta);
+% 
+% prostredie = zeros(sirka,vyska,3);
+prostredie = zeros(sirka,vyska);
 
-prostredie = zeros(sirka,vyska,3);
+% 
+% % Farba pozadia prostredia (biela)
+% prostredie(:,:,1) = cesta*255;
+% prostredie(:,:,2) = cesta*255;
+% prostredie(:,:,3) = cesta*255;
 
-% Farba pozadia prostredia (biela)
-prostredie(:,:,1) = cesta*255;
-prostredie(:,:,2) = cesta*255;
-prostredie(:,:,3) = cesta*255;
+prostredie(:,:) = cesta*255;
 
-% Farba startu (zelena)
-prostredie(start(1,1),start(1,2),1) = 0;
-prostredie(start(1,1),start(1,2),2) = 255;
-prostredie(start(1,1),start(1,2),3) = 0;
-
+% % Farba startu (zelena)
+% prostredie(start(1,1),start(1,2),1) = 0;
+% prostredie(start(1,1),start(1,2),2) = 255;
+% prostredie(start(1,1),start(1,2),3) = 0;
+% 
 
 % pozicia vozidla
 % prostredie(pozicia(1,1),pozicia(1,2),1) = 0;
@@ -21,16 +25,16 @@ prostredie(start(1,1),start(1,2),3) = 0;
 % prostredie(pozicia(1,1),pozicia(1,2),3) = 155;
 
 % prostredie=insertMarker(prostredie, [pozicia(2),pozicia(1)],'x','color','magenta');
-prostredie=insertMarker(prostredie, pozicia,'x','color','magenta');
-prostredie=insertMarker(prostredie, [1,1],'x','color','magenta');
+% prostredie=insertMarker(prostredie, pozicia,'x','color','magenta');
+% prostredie=insertMarker(prostredie, [1,1],'x','color','magenta');
+% 
 
-
-%%checkpointy
-for k=1:length(checkpoints)
-    prostredie(checkpoints(1,k),checkpoints(2,k),1) = 0;
-    prostredie(checkpoints(1,k),checkpoints(2,k),2) = 255;
-    prostredie(checkpoints(1,k),checkpoints(2,k),3) = 0;
-end
+% %%checkpointy
+% for k=1:length(checkpoints)
+%     prostredie(checkpoints(1,k),checkpoints(2,k),1) = 0;
+%     prostredie(checkpoints(1,k),checkpoints(2,k),2) = 255;
+%     prostredie(checkpoints(1,k),checkpoints(2,k),3) = 0;
+% end
 
 % Zobrazenie prostredia 
 % figure(2)
@@ -175,9 +179,19 @@ crop_y_coordinate = round((cropped_image_size(1) - vysek_vyska)/2);
 rectangle_mask = [crop_x_coordinate,crop_y_coordinate,...
                   vysek_sirka, vysek_vyska];
 
-final_image = imcrop(rotated_croped_image,rectangle_mask);
+image = imcrop(rotated_croped_image,rectangle_mask);
 
-final_image = imresize(final_image, 1);
+image = imcrop(rotated_croped_image,rectangle_mask);
+
+image_size = size(image);
+x_step=floor(image_size(1)/step);
+y_step=floor(image_size(2)/step);
+
+for (i=1:1:x_step)
+    for (j=1:1:y_step)
+        final_image(i,j)=image(i*step,j*step);
+    end
+end
 nexttile
 imshow(final_image)
 title('Vysledny obrazok')

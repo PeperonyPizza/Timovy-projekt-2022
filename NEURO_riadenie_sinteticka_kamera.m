@@ -184,9 +184,13 @@ W1 = []; W2 = []; W3 = [];
             
             lidar_16_predne = lidar_16_predne';
             
-            
+            neuro_imput_image=rotacia_obrazu_v1_BW(start,cesta,checkpoints, [pozicia(2),pozicia(1)], 360/ , 5);
+            neuro_image_vector=[];
+            for i=1:size(matrix,1)
+                neuro_image_vector=[neuro_image_vector matrix(i,:)];
+            end
 %             natocenie = neuronova_siet(W1,W2,W3,snimace);lidar_16_predne
-            natocenie = neuronova_siet(W1,W2,W3,lidar_16_predne);
+            natocenie = neuronova_siet(W1,W2,W3,lidar_16_predne,neuro_image_vector);
 
             orientacia = aktualizacia_orientacia(natocenie,orientacia);
             
