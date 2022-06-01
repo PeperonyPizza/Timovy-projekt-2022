@@ -19,6 +19,5 @@ trasa_num = 1;
 
 for i=0:4:360
 %     rotacia_obrazu_v2_RGB(start,cesta,checkpoints, [74 39], i , 4);
-    rotacia_obrazu_v1_BW(start,cesta,checkpoints, [74 39], i , 5);
-
+    rotacia_obrazu_v1_BW(cesta,[74 39], i , 5,1);
 end

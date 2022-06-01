@@ -1,9 +1,9 @@
-function [output] = neuronova_siet(W1,W2,W3,snimace)
+function [output] = neuronova_siet(W11,W12,W2,W3,snimace,neuro_image_vector)
             %=============================================================>
             %                     VYPOCET VYSTUPU UNS
             %=============================================================>
             
-            A1 = W1*double(snimace/4);
+            A1 = [W11*double(snimace/16)+ W12*neuro_image_vector/255];
             O1 = tanh(A1);
             A2 = W2*O1;
             O2 = tanh(A2);

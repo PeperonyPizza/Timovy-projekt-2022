@@ -1,7 +1,7 @@
 clc
 clear
 addpath("genetic")
-numgen = 400; % pocet generacii
+numgen = 200; % pocet generacii
 lpop = 25;	   % pocet chromozonov v populacii
 lstring = 450; % pocet genov v chromozone (90+100+10)200
 M = 1;         % maximalny prehladavaci priestor
@@ -16,16 +16,16 @@ start_line = [36:43; collum];
 min_pp=inf;
 
 %%%%%% NASTAVENIE MAPY %%%%%%
-trasa_num = 5;      %vyber mapy: 1 = stvorec
+trasa_num = 3;      %vyber mapy: 1 = stvorec
                     %            2 = race track
                     %            3 = kruh
                     %            4 = osmicka
                     %            5 = sestuholnik
                     %            6 = race track_2
-pocetSpusteni = 2;  %pre dalsie spustenie sa vygeneruje nova populacia
+pocetSpusteni = 1;  %pre dalsie spustenie sa vygeneruje nova populacia
 kroky = 450;        %dt
 %%%%%% NASTAVENIE POHIBLIVYCH PREKAZOK %%%%%%  (0 alebo 1)
-prekazky_zapnute = 1;      %vyber mapy: 0 = generovanie prekazok vypnute
+prekazky_zapnute = 0;      %vyber mapy: 0 = generovanie prekazok vypnute
                            %            1 = generovanie prekazok vypnute
 
 if(trasa_num == 1)  %stvorec
@@ -205,14 +205,14 @@ W11 = []; W12 = []; W2 = []; W3 = [];
             
             [rows_im,collums_im]=size(neuro_imput_image);
             
-%             if rows_im < 4 || collums_im<6  
-%                 empti_image=ones([4 6])*255;
-%                 for row_n=1:1:rows_im
-%                     for coll_n = 1:1:collums_im
-%                         empti_image(row_n,coll_n) = neuro_imput_image(row_n,coll_n);
-%                     end
-%                 end
-%             end
+            if rows_im < 4 || collums_im<6  
+                empti_image=ones([4 6])*255;
+                for row_n=1:1:rows_im
+                    for coll_n = 1:1:collums_im
+                        empti_image(row_n,coll_n) = neuro_imput_image(row_n,coll_n);
+                    end
+                end
+            end
             
             for placement=1:size(neuro_imput_image,1)
                 neuro_image_vector=[neuro_image_vector neuro_imput_image(placement,:)];
@@ -233,7 +233,7 @@ W11 = []; W12 = []; W2 = []; W3 = [];
             pozicia = [riadok_draha,stlpec_draha];
 
             if cesta(pozicia(1,1),pozicia(1,2)) == 1
-                pokuta_vybocenie = 85000;
+                pokuta_vybocenie = 75000;
             else
                 pokuta_vybocenie = -0.1;
             end
@@ -330,7 +330,7 @@ xlabel('Generácie');
 ylabel('Fitnes');
 
 %%
-% spustenie
+spustenie
 if spustenie == 1
     save('spustenie_1')
 elseif spustenie == 2
