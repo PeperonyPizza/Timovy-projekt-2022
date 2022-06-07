@@ -206,13 +206,11 @@ for gen = 1:numgen
             % Viktor s Mišom skúsia dorobiť aby prekážka išla dlhšie rovno a náhodne nezatáčala
             if prekazky_zapnute == 1
                 for p = 1:2:length(new_pohybujuce_prekazky)
-                if (new_pohybujuce_prekazky(p) == pozicia(1) && new_pohybujuce_prekazky(p+1) == pozicia(2))
-                    kolizie_s_prekazkamy = kolizie_s_prekazkamy + 1;
-                else
+                    if (new_pohybujuce_prekazky(p) == pozicia(1) && new_pohybujuce_prekazky(p+1) == pozicia(2))
+                        kolizie_s_prekazkamy = kolizie_s_prekazkamy + 1;
+                    end
                     cesta(new_pohybujuce_prekazky(p),new_pohybujuce_prekazky(p+1)) = 0;%vynulovanie prekazky
                     trasa_prekazky(new_pohybujuce_prekazky(p),new_pohybujuce_prekazky(p+1)) = trasa_prekazky(new_pohybujuce_prekazky(p),new_pohybujuce_prekazky(p+1))+1;
-                end
-                
                 end
             end
 
