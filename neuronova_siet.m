@@ -1,4 +1,4 @@
-function [output] = neuronova_siet(W1,W2,W3,snimace)
+function [output] = neuronova_siet(W11,W12,W2,W3,snimace,neuro_image_vector)
 %=========================================================================>
 %                   NEURONOVA SIET - Analógový pohyb
 %=========================================================================>

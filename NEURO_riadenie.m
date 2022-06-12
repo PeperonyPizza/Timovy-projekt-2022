@@ -1,3 +1,4 @@
+
 clc
 clear
 addpath("genetic")
@@ -5,9 +6,9 @@ addpath("genetic")
 %               TRÉNOVANIE NEURÓNOVEJ SIETE - ANALÓGOVÁ FORMA
 %=========================================================================>
 %% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numgen = 250;             % počet generácii
+numgen = 400;             % počet generácii
 lpop = 25;	            % počet chromozónov v populacii
-lstring = 210;          % počet génov v chromozone (90+100+10)200
+lstring = 450;          % počet génov v chromozone (340+100+10)
 M = 1;                  % maximálny prehladávací priestor
 min_pp=inf;             % pre hľadanie jedinca s najlepšou fit funkciou 
 Space = [ones(1,lstring) * (-M); ones(1,lstring)]; % prehladavaci priestor
@@ -69,15 +70,21 @@ for gen = 1:numgen
         %=====================================================================>
         %                      VYTVORENIE MATIC W1,W2,W3
         %=====================================================================>
-        W1 = []; W2 = []; W3 = [];    
-        for j = 10:10:100   % W1 => (10x9 = 90)
-            W1(end+1,:) = Pop(i,j-9:j);
-        end    
-        for j = 101:10:200  % W2 => (10x10 = 100)
-            W2(end+1,:) = Pop(i,j-9:j);   
-        end     
-        for j = 201:10:210  % W3 => (1x10 = 10)
-            W3(end+1,:) = Pop(i,j-9:j); 
+        W11 = []; W12 = []; W2 = []; W3 = [];    
+            
+        for j = 10:10:100                             
+            W11(end+1,:) = Pop(i,j-9:j);          
+        end       
+        % W2 => (10x10 = 100)
+        for j = 101:24:340            
+            W12(end+1,:) = Pop(i,j-23:j);               
+        end      
+        for j = 341:10:440
+            W2(end+1,:) = Pop(i,j-9:j);              
+        end       
+        % W3 => (1x10 = 10)
+        for j = 441:10:450
+            W3(end+1,:) = Pop(i,j-9:j);     
         end
 
         %% Pohyb vozidla       
@@ -134,9 +141,37 @@ for gen = 1:numgen
             end
             lidar_16_predne(end+1) = predosla_zmena;
             lidar_16_predne = lidar_16_predne';
-
+            
+%%
+            %%% Synteticka kamera
+            %vypocet stupnov s hodnoty natocennia
+            stupne_pre_kameru=orientacia_na_stupne(orientacia);
+            try
+                %ziskane obrazu ako vstup pre NS
+                neuro_imput_image=rotacia_obrazu_v1_BW(cesta,[pozicia(2),pozicia(1)], stupne_pre_kameru, 5,0);
+            catch
+                neuro_imput_image = ones([4 6])*255;
+            end
+            
+            neuro_image_vector=[];            
+            
+            [rows_im,collums_im]=size(neuro_imput_image);
+            
+            %vektor vstupov z obrazu pre NS
+            for placement=1:size(neuro_imput_image,1)
+                neuro_image_vector=[neuro_image_vector neuro_imput_image(placement,:)];
+            end
+            
+            %uistenie sa ci vstupuje spravny vektor do NS
+            if size(neuro_image_vector)<24
+                neuro_image_vector=ones(1,24)*255;
+            end
+%%            
+            
+            
             %NS - VRACIA NOVÚ HODNOTU ZMENY ŽIADANÉHO NATOČENIA
-            natocenie = neuronova_siet(W1,W2,W3,lidar_16_predne);
+            natocenie = neuronova_siet(W11,W12,W2,W3,lidar_16_predne,(neuro_image_vector)');
+
 
             %VYPOČÍTA SA NATOČENIE VOZIDLA NA ZÁKLADE ZMENY NATOČENIA
             orientacia = aktualizacia_orientacia(natocenie,orientacia);
