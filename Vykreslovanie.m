@@ -1,9 +1,26 @@
-function [] = Vykreslovanie(riadok_cesta,stlpec_cesta,pozicia,draha,start,cesta,checkpoints, spustenie)
+function [] = Vykreslovanie(riadok_cesta,stlpec_cesta,pozicia,draha,start,cesta,checkpoints)
+%=========================================================================>
+%                   VYKRESLOVANIE - Analógová forma
+%=========================================================================>
+% Táto funkcia je rovnaká pre diskrétnu aj analógovú formu pohybu robota.
+%
+% 
+% VYKRESLOVANIE  Vykreslenie trajektorie vozidla.
+%   [] = VYKRESLOVANIE(RIADOK_CESTA, STLPEC_CESTA, POZICIA, DRAHA, START, CESTA, CHECKPOINTS)
+%      RIADOK_CESTA, STLPEC_CESTA   rozmer prostredia n x m    
+%      POZICIA                      aktualna poloha vozidla vektor [x, y]
+%      DRAHA                        trajektória vozidla
+%      START                        startovacia poloha vozidla v tvare [x, y]
+%      CESTA                        mapa prostredia
+%      CHECKPOINTS                  poloha checkpointov
+%                           
+%
+% See also KONTROLA_SNIMACOV, NEURONOVA_SIET, AKTUALIZACIA_ORIENTACIA, 
+%          KONTROLA_ZMENY_ORIENTAACIE, POHYB, GENETICKY_ALGORITMUS,
+%          VYBER_TRASY, POHYBUJUCE_PREKAZKY, VYKRESLOVANIE_SIMULACIA.
 
 
 % vytvorenie prostredia
-
-
 prostredie = zeros(riadok_cesta,stlpec_cesta,3);
 
 % Farba pozadia prostredia (biela)
@@ -37,7 +54,6 @@ prostredie(pozicia(1,1),pozicia(1,2),2) = 0;
 prostredie(pozicia(1,1),pozicia(1,2),3) = 255;
 
 % Zobrazenie prostredia 
-figure(spustenie+20)
+figure
 imshow(uint8(prostredie))
 end
-
