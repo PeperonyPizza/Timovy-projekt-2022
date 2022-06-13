@@ -60,35 +60,35 @@ h = max_coordinates_val(2)- min_coordinates_val(2);
 rectangle_crop_coordinates_2 = [min(rohy_r,[],1),w,h];
 
 %%
-%origo prostredie
-% tiledlayout(4,2)
-% nexttile([4,1])
+% origo prostredie
+tiledlayout(4,2)
+nexttile([4,1])
 
-% imshow(prostredie)
-% title('Povodne prostredie')
+imshow(prostredie)
+title('Povodne prostredie')
 %%
 croped_image = imcrop(prostredie,rectangle_crop_coordinates_1);
 %cropnuty obrazok
-% nexttile
-% % imshow(croped_image*255)
-% imshow(croped_image)
-% title('Cropnuty obrazok (vozidlo v strede)')
+nexttile
+% imshow(croped_image*255)
+imshow(croped_image)
+title('Cropnuty obrazok (vozidlo v strede)')
 
 
 
 %%
 croped_image = imcrop(prostredie,rectangle_crop_coordinates_2);
 %cropnuty obrazok
-% nexttile
-% imshow(croped_image)
-% title('Cropnuty obrazok')
+nexttile
+imshow(croped_image)
+title('Cropnuty obrazok')
 
 %%
-% nexttile
+nexttile
 %orotovany obrazok
 rotated_croped_image = imrotate(croped_image,uhol,'bilinear');
-% imshow(rotated_croped_image)
-% title('Cropnuty obrazok orotovany okolo vozidla')
+imshow(rotated_croped_image)
+title('Cropnuty obrazok orotovany okolo vozidla')
 
 %%
 

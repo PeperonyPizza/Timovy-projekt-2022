@@ -1,64 +1,10 @@
-
-clc
-clear
-addpath("genetic")
-%=========================================================================>
-%               TRÉNOVANIE NEURÓNOVEJ SIETE - ANALÓGOVÁ FORMA
-%=========================================================================>
-%% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numgen = 200;          % počet generácii
-lpop = 25;	            % počet chromozónov v populacii
-lstring = 450;          % počet génov v chromozone (340+100+10)
-M = 1;                  % maximálny prehladávací priestor
-min_pp=inf;             % pre hľadanie jedinca s najlepšou fit funkciou 
-Space = [ones(1,lstring) * (-M); ones(1,lstring)]; % prehladavaci priestor
-Delta = Space(2,:) / 50;% krok aditivnej mutacie
-
-%% %%%%%%%%%%%%%%%%%%%%   NASTAVENIE MAPY  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-trasa_num = 1;          %vyber mapy: 1 = stvorec
-                        %            2 = race track
-                        %            3 = kruh
-                        %            4 = osmicka
-                        %            5 = sestuholnik
-                        %            6 = race track_2
-[start,cesta,checkpoints,prekazky] = vyber_trasy(trasa_num);
-[riadok_cesta,stlpec_cesta] = size(cesta);
-
-%% %%%%%%%%%%%%%   DĹŽKA POHYBU VOZIDLA PO DRÁHE  %%%%%%%%%%%%%%%%%%%%%%%%%                                          
-kroky = 650;           % dt
-
-%% %%%%%%%%%%%%   NASTAVENIE POHYBLIVÝCH PREKÁŽOK  %%%%%%%%%%%%%%%%%%%%%%%% 
-prekazky_zapnute = 0;   % 0 = generovanie prekazok vypnute
-                        % 1 = generovanie prekazok vypnute
-
-%% %%%%%%%%%%%%%%%   INICIALIZÁCIA POPULÁCIE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%NÁHODNÉ VYGENEROVANIE JEDINCOV
-Pop = genrpop(lpop,Space);
-
-%ODKOMENTOVAŤ PRE NAČíTANIE PREDTRÉNOVANEJ POPULÁCIE        
-% Pop = load('pop');%genrpop(lpop,Space);
-% Pop = Pop.Pop;
-
-%%
-%=========================================================================>
-%           MAIN CYKLUS - cyklus pre jednotlivé generácie
-%=========================================================================>
-
-%pozeráme 10 krokov dozadu - aby sa vozidlo nezacyklilo na mieste
-predchadzajuce_kroky = zeros(2,10);
-
-kolizie_s_prekazkamy = 0;   %pre ukladanie počtu kolízii pri trénovaní
-
-
-
-
-for gen = 1:numgen
-    if mod(gen,5) == 0 %zobrazenie poradia aktuálnej generácie GA
+function [evolution,best_pozicia,best_draha,Pop] = test(Pop,lpop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,gen,start,cesta,checkpoints,prekazky,min_pp,Space,Delta)
+ if mod(gen,5) == 0 %zobrazenie poradia aktuálnej generácie GA
         disp(gen);
     end
+
     kolizie_s_prekazkamy = 0;   %pre ukladanie počtu kolízii pri trénovaní
 
-    
     %% Skontrolovanie každého riešenia - každý jedinec z populácie
     for i = 1:lpop
         %% PREKAZKY - INICIALIZOVANIE PREKÁŽOK
@@ -153,14 +99,14 @@ for gen = 1:numgen
             stupne_pre_kameru=orientacia_na_stupne(orientacia);
             try
                 %ziskane obrazu ako vstup pre NS
-                neuro_imput_image=rotacia_obrazu_v1_BW(cesta,[pozicia(2),pozicia(1)], stupne_pre_kameru, 5,1);
+                neuro_imput_image=rotacia_obrazu_v1_BW(cesta,[pozicia(2),pozicia(1)], stupne_pre_kameru, 5,0);
             catch
                 neuro_imput_image = ones([4 6])*255;
             end
             
             neuro_image_vector=[];            
             
-            [rows_im,collums_im]=size(neuro_imput_image);
+            %[rows_im,collums_im]=size(neuro_imput_image);
             
             %vektor vstupov z obrazu pre NS
             for placement=1:size(neuro_imput_image,1)
@@ -271,25 +217,5 @@ for gen = 1:numgen
     evolution(gen) = min(Fit);
     %% GA pre optimalizáciu riešenia 
     Pop = geneticky_algoritmus(Pop,Fit,Space,Delta);
- 
 end
 
-%% VYHODNOTENIE TRÉNOVANIA NS
-%=========================================================================>
-%                   ZOBRAZENIE VYSLEDKOV TRÉNOVANIA
-%=========================================================================>
-kolizie_s_prekazkamy
-% Najlepsie riesenie - vykreslenie
-figure(1)
-plot(evolution) 
-
-title('Evolúcia');
-xlabel('Generácie');
-ylabel('Fitnes');
-
-Vykreslovanie(riadok_cesta,stlpec_cesta,best_pozicia,best_draha,start,cesta,checkpoints)
-if prekazky_zapnute == 1
-    Vykreslovanie(riadok_cesta,stlpec_cesta,best_pozicia,trasa_prekazky,start,cesta,checkpoints)
-end
-
-save('NS_premenne-vystup_Trenovania')
