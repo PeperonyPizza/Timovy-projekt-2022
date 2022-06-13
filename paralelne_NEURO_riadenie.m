@@ -6,7 +6,7 @@ addpath("genetic")
 %               TRÉNOVANIE NEURÓNOVEJ SIETE - ANALÓGOVÁ FORMA
 %=========================================================================>
 %% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numgen = 400;          % počet generácii
+numgen = 1000;          % počet generácii
 lpop = 25;	            % počet chromozónov v populacii
 lstring = 450;          % počet génov v chromozone (340+100+10)
 M = 1;                  % maximálny prehladávací priestor
@@ -15,7 +15,7 @@ Space = [ones(1,lstring) * (-M); ones(1,lstring)]; % prehladavaci priestor
 Delta = Space(2,:) / 50;% krok aditivnej mutacie
 
 %% %%%%%%%%%%%%%%%%%%%%   NASTAVENIE MAPY  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-trasa_num = 2;          %vyber mapy: 1 = stvorec
+trasa_num =6;          %vyber mapy: 1 = stvorec
                         %            2 = race track
                         %            3 = kruh
                         %            4 = osmicka
@@ -53,7 +53,7 @@ min_pp = inf;
 finalFit=zeros(1,lpop);
 final_best_pozicia = zeros(lpop,2);
 final_best_draha = zeros(lpop,riadok_cesta,stlpec_cesta);
-finalPop = zeros(lpop,lpop,lstring);
+finalPop = zeros(lpop,lstring);
 X = 0;
 
 kolizie_s_prekazkamy = 0;   %pre ukladanie počtu kolízii pri trénovaní
@@ -63,17 +63,17 @@ tic;
 for gen = 1:numgen
     parfor i = 1:lpop
         [par_fit,par_best_pozicia,par_best_draha,par_Pop]=simulacia_jazdy(...
-        Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i);
+        Pop(i,:),prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i);
 
         finalFit(i)= par_fit(end);
-        finalPop(i,:,:)= par_Pop;
+        finalPop(i,:) = par_Pop;
         final_best_pozicia(i,:) = par_best_pozicia;
         final_best_draha(i,:,:) = par_best_draha;
-
+         
     end
     [evolution(gen),min_pos] = min(finalFit);
     %% GA pre optimalizáciu riešenia 
-    Pop = geneticky_algoritmus(squeeze(finalPop(min_pos,:,:)),finalFit,Space,Delta);
+    Pop = geneticky_algoritmus(finalPop,finalFit,Space,Delta);
     gen
     toc
 end
@@ -92,7 +92,7 @@ xlabel('Generácie');
 ylabel('Fitnes');
 
 [min_hodnota, pozicia_min_hodnoty] = min(finalFit);
-
+figure
 Vykreslovanie(riadok_cesta,stlpec_cesta,final_best_pozicia(pozicia_min_hodnoty,:),squeeze(final_best_draha(pozicia_min_hodnoty,:,:)),start,cesta,checkpoints)
 
 figure

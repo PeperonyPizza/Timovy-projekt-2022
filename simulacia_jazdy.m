@@ -17,26 +17,27 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
             
 
         for j = 24:24:240                             
-            W1(end+1,:) = Pop(i,j-23:j);          
+            W1(end+1,:) = Pop(j-23:j);          
         end       
 
         for j = 241:10:340
-            W2(end+1,:) = Pop(i,j-9:j);              
+            W2(end+1,:) = Pop(j-9:j);              
         end       
        
         for j = 341:10:350
-            W3(end+1,:) = Pop(i,j-9:j);     
+            W3(end+1,:) = Pop(j-9:j);     
         end
 
         %% Pohyb vozidla       
         % Nastavenie zakladnych parametrov
         draha = zeros(riadok_cesta,stlpec_cesta); % ukladanie trajektorie vozidla
         pozicia = start;    % aktualna poloha vozidla
-        orientacia = 15;    % natočenie - hodnota 0 až 15:
+        orientacia = 0;    % natočenie - hodnota 0 až 15:
                             % smer po osi X/Y: 4 nahor, 8 doprava, 12 dole, 0 doľava
                             % smer po uhlopriečkach: 2,6,10,14
                             % ostatne - medzi uhloprieckou a osou: 1,3,5,7,9,11,13,15
         predosla_zmena = 0;
+        pokuta_obraz = 0;
         pp = 0;             % pokutovanie
 
         checkpoint_pomoc = 4; % checkpoint ma dĺžku 8 pixelov (pri výpočte sa počíta z jeho stredom)
@@ -56,6 +57,8 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
         %                       SPUSTENIE ROBOTA
         %=================================================================>
         for k = 1:kroky
+            pokuta_obraz = 0;
+            
             %%% PREKAZKY - pohyb prekazok
             %            - pre staticke prekazky zakomentovat volanie funkcie
             %            pohybujuce_prekazky()
@@ -70,7 +73,7 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
             predosla_orientacia = orientacia;
             % ukladanie trajektorie pre vykreslenie
             draha(pozicia(1,1),pozicia(1,2)) = draha(pozicia(1,1),pozicia(1,2)) + 1;
-            
+             
 
             
 %%
@@ -119,7 +122,7 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
             %=============================================================>
             %                       POKUTOVANIE
             %=============================================================>
-            %% POKUTOVANIE VYBOČENIA VOZIDLA Z DRÁHY
+          %% POKUTOVANIE VYBOČENIA VOZIDLA Z DRÁHY
             if cesta(pozicia(1,1),pozicia(1,2)) == 1
                 pokuta_vybocenie = 75000;
             else
@@ -180,8 +183,16 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
                 end
             end
 
+            
+            for pixel=1:size(neuro_image_vector)
+               if  neuro_image_vector(pixel)== 255
+                   pokuta_obraz = pokuta_obraz + 1000;
+               else     
+                   pokuta_obraz = pokuta_obraz - 50000;
+            end
+
             %% VÝSLEDNÉ SPOČÍTANIE POKÚT
-            pp = 1 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + pokuta_vzdialenost_od_cp - 100 * mensia_vzdialenost - prejdenie_cp * 500000;
+            pp = 1 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + pokuta_vzdialenost_od_cp - 100 * mensia_vzdialenost - prejdenie_cp * 500000 +pokuta_obraz;
         end
 
         %% uloženie najlepšieho riešenia (jedinca)
