@@ -6,7 +6,7 @@ addpath("genetic")
 %               TRÉNOVANIE NEURÓNOVEJ SIETE - ANALÓGOVÁ FORMA
 %=========================================================================>
 %% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numgen = 2500;          % počet generácii
+numgen = 400;          % počet generácii
 lpop = 25;	            % počet chromozónov v populacii
 lstring = 450;          % počet génov v chromozone (340+100+10)
 M = 1;                  % maximálny prehladávací priestor
@@ -62,7 +62,8 @@ kolizie_s_prekazkamy = 0;   %pre ukladanie počtu kolízii pri trénovaní
 tic;
 for gen = 1:numgen
     parfor i = 1:lpop
-        [par_fit,par_best_pozicia,par_best_draha,par_Pop]=test(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,gen,start,cesta,checkpoints,prekazky,min_pp,i);
+        [par_fit,par_best_pozicia,par_best_draha,par_Pop]=simulacia_jazdy(...
+        Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i);
 
         finalFit(i)= par_fit(end);
         finalPop(i,:,:)= par_Pop;

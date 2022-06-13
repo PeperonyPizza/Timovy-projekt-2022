@@ -1,4 +1,4 @@
-function [Fit,best_pozicia,best_draha,Pop] = test(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,gen,start,cesta,checkpoints,prekazky,min_pp,i)
+function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i)
         %% PREKAZKY - INICIALIZOVANIE PREKÁŽOK
 %         if mod(gen,20) == 0
 %             [start,cesta] = vyber_trasy(trasa_num);
@@ -13,20 +13,18 @@ function [Fit,best_pozicia,best_draha,Pop] = test(Pop,prekazky_zapnute,riadok_ce
         %=====================================================================>
         %                      VYTVORENIE MATIC W1,W2,W3
         %=====================================================================>
-        W11 = []; W12 = []; W2 = []; W3 = [];    
+        W1 = []; W2 = []; W3 = [];    
             
-        for j = 10:10:100                             
-            W11(end+1,:) = Pop(i,j-9:j);          
+
+        for j = 24:24:240                             
+            W1(end+1,:) = Pop(i,j-23:j);          
         end       
-        % W2 => (10x10 = 100)
-        for j = 101:24:340            
-            W12(end+1,:) = Pop(i,j-23:j);               
-        end      
-        for j = 341:10:440
+
+        for j = 241:10:340
             W2(end+1,:) = Pop(i,j-9:j);              
         end       
-        % W3 => (1x10 = 10)
-        for j = 441:10:450
+       
+        for j = 341:10:350
             W3(end+1,:) = Pop(i,j-9:j);     
         end
 
@@ -73,17 +71,7 @@ function [Fit,best_pozicia,best_draha,Pop] = test(Pop,prekazky_zapnute,riadok_ce
             % ukladanie trajektorie pre vykreslenie
             draha(pozicia(1,1),pozicia(1,2)) = draha(pozicia(1,1),pozicia(1,2)) + 1;
             
-            %ZÍSKANIE HODNôT Z LIDARU
-            [lidar_16] = kontrola_snimacov(pozicia,cesta,orientacia);
-            prvy = 1;
-            %DO NS VSTUPUJÚ LEN LÚČE Z PREDNEJ ČASTI VOZIDLA (9 LÚČOV)
-            lidar_16_predne = 0;
-            for in = 1:9
-                lidar_16_predne(in) = lidar_16(prvy);
-                prvy = prvy+1;
-            end
-            lidar_16_predne(end+1) = predosla_zmena;
-            lidar_16_predne = lidar_16_predne';
+
             
 %%
             %%% Synteticka kamera
@@ -113,7 +101,7 @@ function [Fit,best_pozicia,best_draha,Pop] = test(Pop,prekazky_zapnute,riadok_ce
             
             
             %NS - VRACIA NOVÚ HODNOTU ZMENY ŽIADANÉHO NATOČENIA
-            natocenie = neuronova_siet(W11,W12,W2,W3,lidar_16_predne,(neuro_image_vector)');
+            natocenie = neuronova_siet(W1,W2,W3,(neuro_image_vector)');
 
 
             %VYPOČÍTA SA NATOČENIE VOZIDLA NA ZÁKLADE ZMENY NATOČENIA

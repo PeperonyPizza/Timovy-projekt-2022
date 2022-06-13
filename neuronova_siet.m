@@ -1,4 +1,4 @@
-function [output] = neuronova_siet(W11,W12,W2,W3,snimace,neuro_image_vector)
+function [output] = neuronova_siet(W1,W2,W3,neuro_image_vector)
 %=========================================================================>
 %                   NEURONOVA SIET - Analógový pohyb
 %=========================================================================>
@@ -24,7 +24,7 @@ function [output] = neuronova_siet(W11,W12,W2,W3,snimace,neuro_image_vector)
 %          VYBER_TRASY, VYKRESLOVANIE, VYKRESLOVANIE_SIMULACIA.
 
             
-            A1 = [W11*double(snimace/16)+ W12*neuro_image_vector/255];
+            A1 = W1*neuro_image_vector/255;
             O1 = tanh(A1);
             A2 = W2*O1;
             O2 = tanh(A2);
