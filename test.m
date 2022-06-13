@@ -1,16 +1,8 @@
-function [evolution,best_pozicia,best_draha,Pop] = test(Pop,lpop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,gen,start,cesta,checkpoints,prekazky,min_pp,Space,Delta)
- if mod(gen,5) == 0 %zobrazenie poradia aktuálnej generácie GA
-        disp(gen);
-    end
-
-    kolizie_s_prekazkamy = 0;   %pre ukladanie počtu kolízii pri trénovaní
-
-    %% Skontrolovanie každého riešenia - každý jedinec z populácie
-    for i = 1:lpop
+function [Fit,best_pozicia,best_draha,Pop] = test(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,gen,start,cesta,checkpoints,prekazky,min_pp,i)
         %% PREKAZKY - INICIALIZOVANIE PREKÁŽOK
-    %     if mod(gen,20) == 0
-    %         [start,cesta] = vyber_trasy(trasa_num);
-    %     end
+%         if mod(gen,20) == 0
+%             [start,cesta] = vyber_trasy(trasa_num);
+%         end
         if prekazky_zapnute == 1
             trasa_prekazky = zeros(150,150);
             new_pohybujuce_prekazky = prekazky;
@@ -213,9 +205,5 @@ function [evolution,best_pozicia,best_draha,Pop] = test(Pop,lpop,prekazky_zapnut
 %             best_W=[W1,W2,W3];
         end
         
-    end
-    evolution(gen) = min(Fit);
-    %% GA pre optimalizáciu riešenia 
-    Pop = geneticky_algoritmus(Pop,Fit,Space,Delta);
 end
 

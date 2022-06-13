@@ -54,6 +54,6 @@ prostredie(pozicia(1,1),pozicia(1,2),2) = 0;
 prostredie(pozicia(1,1),pozicia(1,2),3) = 255;
 
 % Zobrazenie prostredia 
-figure
+% figure
 imshow(uint8(prostredie))
 end

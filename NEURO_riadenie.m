@@ -153,7 +153,7 @@ for gen = 1:numgen
             stupne_pre_kameru=orientacia_na_stupne(orientacia);
             try
                 %ziskane obrazu ako vstup pre NS
-                neuro_imput_image=rotacia_obrazu_v1_BW(cesta,[pozicia(2),pozicia(1)], stupne_pre_kameru, 5,1);
+                neuro_imput_image=rotacia_obrazu_v1_BW(cesta,[pozicia(2),pozicia(1)], stupne_pre_kameru, 5,0);
             catch
                 neuro_imput_image = ones([4 6])*255;
             end
