@@ -1,5 +1,5 @@
-clc
-clear
+% clc
+% clear
 addpath("genetic")
 %=========================================================================>
 %               SIMULÁCIA NATRÉNOVANEJ NS - ANALÓGOVÁ FORMA
@@ -28,8 +28,8 @@ prekazky_zapnute = 0;      %vyber mapy: 0 = generovanie prekazok vypnute
 %% %%%%%%%%%%%%%%%%%%%%%   DĹŽKA SIMULÁCIE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                            
 kroky = 1300;        %dt
 %% %%%%%%%%   POUŽITIE NATRÉNOVANÉHO JEDINCA Z POPULÁCIE  %%%%%%%%%%%%%%%%% 
-Pop = load('pop'); %využíva sa len najlepší jedinec (1. z populácie)
-Pop = Pop.Pop;
+% Pop = load('pop'); %využíva sa len najlepší jedinec (1. z populácie)
+% Pop = Pop.Pop;
 
 if(trasa_num == 1)  %stvorec
     prekazky = [41 118, 38 98, 40 78, 42 36, 70 34, 110 46, 112 86, 112 106, 99 116, 79 117, 59 114];

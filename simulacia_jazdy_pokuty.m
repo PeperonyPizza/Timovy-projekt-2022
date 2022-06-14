@@ -1,4 +1,4 @@
-function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i)
+function [sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdialenost_od_cp,summensia_vzdialenost,sumprejdenie_cp] = simulacia_jazdy_pokuty(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i)
         %% PREKAZKY - INICIALIZOVANIE PREKÁŽOK
 %         if mod(gen,20) == 0
 %             [start,cesta] = vyber_trasy(trasa_num);
@@ -53,6 +53,15 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
         addX54 = 0;
         subY25 = 0;
         addY45 = 0;
+        
+            sumpokuta=zeros(kroky);
+            sumpokuta_vybocenie=zeros(kroky);
+            sumpokuta_cyklus=zeros(kroky);
+            sumpokuta_vzdialenost_od_cp=zeros(kroky);
+            summensia_vzdialenost =zeros(kroky);
+            sumprejdenie_cp=zeros(kroky);
+            sumpokuta_obraz=zeros(kroky);
+            sumpp=zeros(kroky);
         %=================================================================>
         %                       SPUSTENIE ROBOTA
         %=================================================================>
@@ -155,7 +164,7 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
             pokuta_vzdialenost_od_cp = sqrt((xdif)^2+(ydif)^2);
             % ak sa priblíži k nasledujúcemu checkpointu dostane bonus
             if old_pokuta_vzdialenost_od_cp > pokuta_vzdialenost_od_cp
-                mensia_vzdialenost = 50000;
+                mensia_vzdialenost = 100000;
             end
             old_pokuta_vzdialenost_od_cp = pokuta_vzdialenost_od_cp;
 
@@ -193,6 +202,15 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
 
             %% VÝSLEDNÉ SPOČÍTANIE POKÚT
             pp = 1 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + pokuta_vzdialenost_od_cp - 1 * mensia_vzdialenost - prejdenie_cp * 500000 +pokuta_obraz;
+            
+            sumpp(k) = pp;
+            sumpokuta(k) = pokuta;
+            sumpokuta_vybocenie(k) = pokuta_vybocenie;
+            sumpokuta_cyklus(k)= pokuta_cyklus;
+            sumpokuta_vzdialenost_od_cp(k) = pokuta_vzdialenost_od_cp;
+            summensia_vzdialenost(k) = - 100 * mensia_vzdialenost;
+            sumprejdenie_cp(k) = - prejdenie_cp * 500000;
+            sumpokuta_obraz(k) =  pokuta_obraz;
             
         end
 

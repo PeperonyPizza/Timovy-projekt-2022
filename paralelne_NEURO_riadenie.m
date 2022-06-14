@@ -6,16 +6,16 @@ addpath("genetic")
 %               TRÉNOVANIE NEURÓNOVEJ SIETE - ANALÓGOVÁ FORMA
 %=========================================================================>
 %% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numgen = 1000;          % počet generácii
-lpop = 25;	            % počet chromozónov v populacii
-lstring = 450;          % počet génov v chromozone (340+100+10)
+numgen = 100;          % počet generácii
+lpop = 50;	            % počet chromozónov v populacii
+lstring = 690;          % počet génov v chromozone (340+100+10)
 M = 1;                  % maximálny prehladávací priestor
 min_pp=inf;             % pre hľadanie jedinca s najlepšou fit funkciou 
 Space = [ones(1,lstring) * (-M); ones(1,lstring)]; % prehladavaci priestor
 Delta = Space(2,:) / 50;% krok aditivnej mutacie
 
 %% %%%%%%%%%%%%%%%%%%%%   NASTAVENIE MAPY  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-trasa_num =6;          %vyber mapy: 1 = stvorec
+trasa_num =2;          %vyber mapy: 1 = stvorec
                         %            2 = race track
                         %            3 = kruh
                         %            4 = osmicka
