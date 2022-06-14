@@ -1,5 +1,5 @@
 i=1;
-[sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdialenost_od_cp,summensia_vzdialenost,sumprejdenie_cp]=simulacia_jazdy_pokuty(...
+[sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdialenost_od_cp,summensia_vzdialenost,sumprejdenie_cp,sumpokuta_obraz]=simulacia_jazdy_pokuty(...
         Pop(i,:),prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i);
     
 figure
@@ -31,3 +31,7 @@ title('summensia vzdialenost');
 nexttile
 plot(sumprejdenie_cp);
 title('sumprejdenie cp');
+
+nexttile
+plot(sumpokuta_obraz);
+title('sumpokuta obraz');

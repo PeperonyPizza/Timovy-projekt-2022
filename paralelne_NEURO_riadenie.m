@@ -6,7 +6,7 @@ addpath("genetic")
 %               TRÉNOVANIE NEURÓNOVEJ SIETE - ANALÓGOVÁ FORMA
 %=========================================================================>
 %% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numgen = 100;          % počet generácii
+numgen = 200;          % počet generácii
 lpop = 50;	            % počet chromozónov v populacii
 lstring = 690;          % počet génov v chromozone (340+100+10)
 M = 1;                  % maximálny prehladávací priestor
@@ -25,7 +25,7 @@ trasa_num =2;          %vyber mapy: 1 = stvorec
 [riadok_cesta,stlpec_cesta] = size(cesta);
 
 %% %%%%%%%%%%%%%   DĹŽKA POHYBU VOZIDLA PO DRÁHE  %%%%%%%%%%%%%%%%%%%%%%%%%                                          
-kroky = 650;           % dt
+kroky = 500;           % dt
 
 %% %%%%%%%%%%%%   NASTAVENIE POHYBLIVÝCH PREKÁŽOK  %%%%%%%%%%%%%%%%%%%%%%%% 
 prekazky_zapnute = 0;   % 0 = generovanie prekazok vypnute
@@ -97,7 +97,7 @@ Vykreslovanie(riadok_cesta,stlpec_cesta,final_best_pozicia(pozicia_min_hodnoty,:
 
 figure
 tiledlayout(5,5)
-for graph=1:lpop
+for graph=1:2:lpop
     nexttile
     Vykreslovanie(riadok_cesta,stlpec_cesta,final_best_pozicia(graph,:),squeeze(final_best_draha(graph,:,:)),start,cesta,checkpoints)
 end

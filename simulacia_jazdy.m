@@ -58,7 +58,7 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
         %=================================================================>
         for k = 1:kroky
             pokuta_obraz = 0;
-            
+
             %%% PREKAZKY - pohyb prekazok
             %            - pre staticke prekazky zakomentovat volanie funkcie
             %            pohybujuce_prekazky()
@@ -124,15 +124,15 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
             %=============================================================>
           %% POKUTOVANIE VYBOČENIA VOZIDLA Z DRÁHY
             if cesta(pozicia(1,1),pozicia(1,2)) == 1
-                pokuta_vybocenie = 75000;
+                pokuta_vybocenie = 7000;
             else
-                pokuta_vybocenie = -0.1; %ODMENA AK NEVYBOČÍ
+                pokuta_vybocenie = -600; %ODMENA AK NEVYBOČÍ
             end
             
             %% POKUTOVANIE ZA ZACYKLENIE
             pokuta_cyklus = 0;
             prejdenie_cp = 0;
-            mensia_vzdialenost = -10000;
+            mensia_vzdialenost = -3000;
             %pokuta ak sa zacykli
             for j = 1:length(predchadzajuce_kroky)
                 if (predchadzajuce_kroky(1,j) == pozicia(1,1)) && (predchadzajuce_kroky(2,j) == pozicia(1,2))
@@ -155,7 +155,7 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
             pokuta_vzdialenost_od_cp = sqrt((xdif)^2+(ydif)^2);
             % ak sa priblíži k nasledujúcemu checkpointu dostane bonus
             if old_pokuta_vzdialenost_od_cp > pokuta_vzdialenost_od_cp
-                mensia_vzdialenost = 50000;
+                mensia_vzdialenost = 8000;
             end
             old_pokuta_vzdialenost_od_cp = pokuta_vzdialenost_od_cp;
 
@@ -186,13 +186,14 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
             
             for pixel=1:size(neuro_image_vector)
                if  neuro_image_vector(pixel)== 255
-                   pokuta_obraz = pokuta_obraz + 1000;
+                   pokuta_obraz = pokuta_obraz + 500;
                else     
-                   pokuta_obraz = pokuta_obraz - 50000;
+                   pokuta_obraz = pokuta_obraz - 1000;
+               end
             end
 
             %% VÝSLEDNÉ SPOČÍTANIE POKÚT
-            pp = 1 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + pokuta_vzdialenost_od_cp - 1 * mensia_vzdialenost - prejdenie_cp * 500000 +pokuta_obraz;
+            pp = 200 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + pokuta_vzdialenost_od_cp*50 - 1 * mensia_vzdialenost - prejdenie_cp * 100000 +pokuta_obraz;
             
         end
 
