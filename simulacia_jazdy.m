@@ -193,7 +193,7 @@ function [Fit,best_pozicia,best_draha,Pop] = simulacia_jazdy(Pop,prekazky_zapnut
             end
 
             %% VÝSLEDNÉ SPOČÍTANIE POKÚT
-            pp = 200 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + pokuta_vzdialenost_od_cp*50 - 1 * mensia_vzdialenost - prejdenie_cp * 100000 +pokuta_obraz;
+            pp = 200 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + pokuta_vzdialenost_od_cp*50 - 1 * mensia_vzdialenost - prejdenie_cp * 300000 +pokuta_obraz;
             
         end
 

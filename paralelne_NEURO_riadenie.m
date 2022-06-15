@@ -6,7 +6,7 @@ addpath("genetic")
 %               TRÉNOVANIE NEURÓNOVEJ SIETE - ANALÓGOVÁ FORMA
 %=========================================================================>
 %% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numgen = 200;          % počet generácii
+numgen = 400;          % počet generácii
 lpop = 50;	            % počet chromozónov v populacii
 lstring = 690;          % počet génov v chromozone (340+100+10)
 M = 1;                  % maximálny prehladávací priestor
@@ -45,7 +45,7 @@ Pop = genrpop(lpop,Space);
 %=========================================================================>
 
 %pozeráme 10 krokov dozadu - aby sa vozidlo nezacyklilo na mieste
-predchadzajuce_kroky = zeros(2,10);
+predchadzajuce_kroky = zeros(2,20);
 
 kolizie_s_prekazkamy = 0;   %pre ukladanie počtu kolízii pri trénovaní
 min_pp = inf;
