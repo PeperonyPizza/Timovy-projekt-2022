@@ -2,11 +2,12 @@
 clc
 clear
 addpath("genetic")
+
 %=========================================================================>
 %               TRÉNOVANIE NEURÓNOVEJ SIETE - ANALÓGOVÁ FORMA
 %=========================================================================>
 %% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-numgen = 400;          % počet generácii
+numgen = 200;          % počet generácii
 lpop = 50;	            % počet chromozónov v populacii
 lstring = 690;          % počet génov v chromozone (340+100+10)
 M = 1;                  % maximálny prehladávací priestor
@@ -15,7 +16,7 @@ Space = [ones(1,lstring) * (-M); ones(1,lstring)]; % prehladavaci priestor
 Delta = Space(2,:) / 50;% krok aditivnej mutacie
 
 %% %%%%%%%%%%%%%%%%%%%%   NASTAVENIE MAPY  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-trasa_num =2;          %vyber mapy: 1 = stvorec
+trasa_num =1;          %vyber mapy: 1 = stvorec
                         %            2 = race track
                         %            3 = kruh
                         %            4 = osmicka
@@ -45,7 +46,7 @@ Pop = genrpop(lpop,Space);
 %=========================================================================>
 
 %pozeráme 10 krokov dozadu - aby sa vozidlo nezacyklilo na mieste
-predchadzajuce_kroky = zeros(2,20);
+predchadzajuce_kroky = zeros(2,25);
 
 kolizie_s_prekazkamy = 0;   %pre ukladanie počtu kolízii pri trénovaní
 min_pp = inf;
@@ -100,6 +101,7 @@ tiledlayout(5,5)
 for graph=1:2:lpop
     nexttile
     Vykreslovanie(riadok_cesta,stlpec_cesta,final_best_pozicia(graph,:),squeeze(final_best_draha(graph,:,:)),start,cesta,checkpoints)
+    title('jedinec c.'+string(graph))
 end
 if prekazky_zapnute == 1
     Vykreslovanie(riadok_cesta,stlpec_cesta,best_pozicia,trasa_prekazky,start,cesta,checkpoints)

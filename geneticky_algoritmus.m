@@ -22,14 +22,14 @@ function [Pop] = geneticky_algoritmus(Pop,Fit,Space,Delta)
 %            VYBER_TRASY, VYKRESLOVANIE, VYKRESLOVANIE_SIMULACIA.
 
 
-    Best = selbest(Pop,Fit,1);
-    Old = selrand(Pop,Fit,20);
-    Work1 = selsus(Pop,Fit,8);
-    Work2 = seltourn(Pop,Fit,16);
+    Best = selbest(Pop,Fit,2);
+    Old = selrand(Pop,Fit,15);
+    Work1 = selsus(Pop,Fit,10);
+    Work2 = seltourn(Pop,Fit,22);
     Work1 = crossov(Work1,1,0);
-    Work2 = mutx(Work2,0.12,Space);
-    Work1 = muta(Work1,0.15,Delta,Space);
-    Work3 = genrpop(5,Space);
+    Work2 = mutx(Work2,0.22,Space);
+    Work1 = muta(Work1,0.25,Delta,Space);
+    Work3 = genrpop(1,Space);
 
     Pop = [Best;Old;Work1;Work2;Work3];
     

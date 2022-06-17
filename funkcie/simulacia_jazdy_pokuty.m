@@ -1,4 +1,4 @@
-function [sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdialenost_od_cp,summensia_vzdialenost,sumprejdenie_cp,sumpokuta_obraz] = simulacia_jazdy_pokuty(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i)
+function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdialenost_od_cp,summensia_vzdialenost,sumprejdenie_cp,sumpokuta_obraz] = simulacia_jazdy_pokuty(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i)
         %% PREKAZKY - INICIALIZOVANIE PREKÁŽOK
 %         if mod(gen,20) == 0
 %             [start,cesta] = vyber_trasy(trasa_num);
@@ -63,12 +63,13 @@ function [sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdiale
             sumpokuta_obraz=zeros(kroky);
             sumpp=zeros(kroky);
             
-              
+                      mensia_vzdialenost = +5000;
+
         %=================================================================>
         %                       SPUSTENIE ROBOTA
         %=================================================================>
         for k = 1:kroky
-            pokuta_obraz = 0;
+           pokuta_obraz = 0;
 
             %%% PREKAZKY - pohyb prekazok
             %            - pre staticke prekazky zakomentovat volanie funkcie
@@ -94,6 +95,9 @@ function [sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdiale
             try
                 %ziskane obrazu ako vstup pre NS
                 neuro_imput_image=rotacia_obrazu_v1_BW(cesta,[pozicia(2),pozicia(1)], stupne_pre_kameru, 5,0);
+                if sum(size(neuro_imput_image))~=10
+                      neuro_imput_image = ones([4 6])*255;
+                end
             catch
                 neuro_imput_image = ones([4 6])*255;
             end
@@ -135,15 +139,15 @@ function [sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdiale
             %=============================================================>
           %% POKUTOVANIE VYBOČENIA VOZIDLA Z DRÁHY
             if cesta(pozicia(1,1),pozicia(1,2)) == 1
-                pokuta_vybocenie = 7000;
+                pokuta_vybocenie = 10000+pokuta_vybocenie;
             else
-                pokuta_vybocenie = -600; %ODMENA AK NEVYBOČÍ
+                pokuta_vybocenie = -2000; %ODMENA AK NEVYBOČÍ
             end
             
             %% POKUTOVANIE ZA ZACYKLENIE
             pokuta_cyklus = 0;
             prejdenie_cp = 0;
-            mensia_vzdialenost = -3000;
+            mensia_vzdialenost = +5000;
             %pokuta ak sa zacykli
             for j = 1:length(predchadzajuce_kroky)
                 if (predchadzajuce_kroky(1,j) == pozicia(1,1)) && (predchadzajuce_kroky(2,j) == pozicia(1,2))
@@ -166,7 +170,7 @@ function [sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdiale
             pokuta_vzdialenost_od_cp = sqrt((xdif)^2+(ydif)^2);
             % ak sa priblíži k nasledujúcemu checkpointu dostane bonus
             if old_pokuta_vzdialenost_od_cp > pokuta_vzdialenost_od_cp
-                mensia_vzdialenost = 8000;
+                mensia_vzdialenost = -2000;
             end
             old_pokuta_vzdialenost_od_cp = pokuta_vzdialenost_od_cp;
 
@@ -195,24 +199,36 @@ function [sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdiale
             end
 
             
-            for pixel=1:size(neuro_image_vector)
-               if  neuro_image_vector(pixel)== 255
-                   pokuta_obraz = pokuta_obraz + 500;
-               else     
-                   pokuta_obraz = pokuta_obraz - 1000;
-               end
-            end
+%             for pixel=1:size(neuro_image_vector)
+%                if  neuro_image_vector(pixel)== 255
+%                    pokuta_obraz = pokuta_obraz + 500;
+%                else     
+%                    pokuta_obraz = pokuta_obraz - 1000;
+%                end
+%             end
+%             
+            
+%             for riadky=1:4
+%                 for stlpce=1:6
+%                     if  neuro_imput_image(riadky,stlpce)== 255
+%                        pokuta_obraz = pokuta_obraz + 200*stlpce;
+%                     else     
+%                        pokuta_obraz = pokuta_obraz - 800*stlpce;
+%                     end
+%                 end
+%             end
+
 
             %% VÝSLEDNÉ SPOČÍTANIE POKÚT
-            pp = 200 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + pokuta_vzdialenost_od_cp*50 - 1 * mensia_vzdialenost - prejdenie_cp * 100000 +pokuta_obraz;
+            pp = 1000 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + (pokuta_vzdialenost_od_cp) + mensia_vzdialenost - (prejdenie_cp * 10000) +pokuta_obraz;
             
             sumpp(k) = pp;
             sumpokuta(k) = pokuta;
             sumpokuta_vybocenie(k) = pokuta_vybocenie;
             sumpokuta_cyklus(k)= pokuta_cyklus;
             sumpokuta_vzdialenost_od_cp(k) = pokuta_vzdialenost_od_cp*50;
-            summensia_vzdialenost(k) = - 1 * mensia_vzdialenost;
-            sumprejdenie_cp(k) = - prejdenie_cp * 500000;
+            summensia_vzdialenost(k) =  mensia_vzdialenost;
+            sumprejdenie_cp(k) = - prejdenie_cp * 10000;
             sumpokuta_obraz(k) =  pokuta_obraz;
             
         end
