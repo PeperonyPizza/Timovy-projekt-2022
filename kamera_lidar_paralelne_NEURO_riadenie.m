@@ -8,7 +8,7 @@ addpath("genetic")
 %% %%%%%%%%%%%%%%%%%%   VOĽBA PARAMETROV GA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 numgen = 200;          % počet generácii
 lpop = 25;	            % počet chromozónov v populacii
-lstring = 450;          % počet génov v chromozone (340+100+10)
+lstring = 790;          % počet génov v chromozone (340+100+10)
 M = 1;                  % maximálny prehladávací priestor
 min_pp=inf;             % pre hľadanie jedinca s najlepšou fit funkciou 
 Space = [ones(1,lstring) * (-M); ones(1,lstring)]; % prehladavaci priestor
@@ -25,7 +25,7 @@ trasa_num = 1;          %vyber mapy: 1 = stvorec
 [riadok_cesta,stlpec_cesta] = size(cesta);
 
 %% %%%%%%%%%%%%%   DĹŽKA POHYBU VOZIDLA PO DRÁHE  %%%%%%%%%%%%%%%%%%%%%%%%%                                          
-kroky = 650;           % dt
+kroky = 500;           % dt
 
 %% %%%%%%%%%%%%   NASTAVENIE POHYBLIVÝCH PREKÁŽOK  %%%%%%%%%%%%%%%%%%%%%%%% 
 prekazky_zapnute = 0;   % 0 = generovanie prekazok vypnute
@@ -45,7 +45,7 @@ Pop = genrpop(lpop,Space);
 %=========================================================================>
 
 %pozeráme 10 krokov dozadu - aby sa vozidlo nezacyklilo na mieste
-predchadzajuce_kroky = zeros(2,10);
+predchadzajuce_kroky = zeros(2,25);
 
 kolizie_s_prekazkamy = 0;   %pre ukladanie počtu kolízii pri trénovaní
 
