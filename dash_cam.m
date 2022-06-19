@@ -1,4 +1,6 @@
-function [final_image] = rotacia_obrazu_v2_RGB(start,cesta,checkpoints, pozicia, uhol, step)
+
+function [final_image] = dash_cam(start,cesta,checkpoints, pozicia, uhol)
+
 % vytvorenie prostredia
 [sirka,vyska] = size(cesta);
 
@@ -57,38 +59,38 @@ min_coordinates_val = min(rohy_r,[],1);
 w = max_coordinates_val(1)- min_coordinates_val(1);
 h = max_coordinates_val(2)- min_coordinates_val(2);
 
-rectangle_crop_coordinates_2 = [min(rohy_r,[],1),w,h];
+% rectangle_crop_coordinates_2 = [min(rohy_r,[],1),w,h];
 
 %%
-% origo prostredie
-tiledlayout(4,2)
-nexttile([4,1])
-
-imshow(prostredie)
-title('Povodne prostredie')
+% % origo prostredie
+% tiledlayout(4,2)
+% nexttile([4,1])
+% 
+% imshow(prostredie)
+% title('Povodne prostredie')
 %%
 croped_image = imcrop(prostredie,rectangle_crop_coordinates_1);
 %cropnuty obrazok
-nexttile
-% imshow(croped_image*255)
-imshow(croped_image)
-title('Cropnuty obrazok (vozidlo v strede)')
+% nexttile
+% % imshow(croped_image*255)
+% imshow(croped_image)
+% title('Cropnuty obrazok (vozidlo v strede)')
 
 
 
 %%
-croped_image = imcrop(prostredie,rectangle_crop_coordinates_2);
+% croped_image = imcrop(prostredie,rectangle_crop_coordinates_2);
 %cropnuty obrazok
-nexttile
-imshow(croped_image)
-title('Cropnuty obrazok')
+% nexttile
+% imshow(croped_image)
+% title('Cropnuty obrazok')
 
 %%
-nexttile
+% nexttile
 %orotovany obrazok
 rotated_croped_image = imrotate(croped_image,uhol,'bilinear');
-imshow(rotated_croped_image)
-title('Cropnuty obrazok orotovany okolo vozidla')
+% imshow(rotated_croped_image)
+% title('Cropnuty obrazok orotovany okolo vozidla')
 
 %%
 
@@ -101,22 +103,31 @@ crop_y_coordinate = round((cropped_image_size(1) - vysek_vyska)/2);
 rectangle_mask = [crop_x_coordinate,crop_y_coordinate,...
                   vysek_sirka, vysek_vyska];
 
-image = imcrop(rotated_croped_image,rectangle_mask);
-nexttile
-imshow(image)
+img = imcrop(rotated_croped_image,rectangle_mask);
+% nexttile
+% imshow(image)
 
-image_size = size(image);
-x_step=floor(image_size(1)/step);
-y_step=floor(image_size(2)/step);
+movingPoints = [1 1; size(img,2) 1; 1 size(img,1); size(img,2) size(img,1)];
+% fixedPoints = [round(size(img,2)*2/5) 1; round(size(img,2)*3/5) 1; 1 100; size(img,2) 100];
+fixedPoints = [round(size(img,2)*2/10) 1; round(size(img,2)*8/10) 1; 1 100; size(img,2) 100];
 
-for (i=1:1:x_step)
-    for (j=1:1:y_step)
-        final_image(i,j,:)=image(i*step,j*step,:);
-    end
-end
+% fixedPoints = [1 1; size(img,2) 1; 1 200; size(img,2) 200];
+tform = fitgeotrans(movingPoints, fixedPoints, 'Projective');
+
+%// Create a reference coordinate system where the extent is the size of
+%// the image
+RA = imref2d([size(img,1) size(img,2)], [1 size(img,2)], [1 size(img,1)]);
+
+%// Warp the image
+[out,r] = imwarp(img, tform, 'OutputView', RA);
+
+%// Show the image and turn off the axes
+% axis off;
 
 
-% pause(0.001)
+% imshow(shaped_image)
+% title('Vysledny obrazok')
+final_image=out;
 
 end
 

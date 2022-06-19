@@ -43,12 +43,13 @@ function [] = Vykreslovanie_simulacia(riadok_cesta,stlpec_cesta,pozicia1,pozicia
         prostredie(pozicia1(1,1),pozicia1(1,2),3) = 0;
         
         % Zobrazenie prostredia 
-        figure(1)
         % I = imshow(uint8(prostredie));
         hold on
-        x=imresize(uint8(prostredie),([700 700]));
-        imshow(x);
-
+%         x=imresize(uint8(prostredie),([700 700]));
+%         imshow(x);
+%         image(imrotate(prostredie,180));
+        image(imrotate(flip(prostredie,2),180));
+    
     elseif pocet_vozidiel == 2
         % vytvorenie prostredia
         prostredie = zeros(riadok_cesta,stlpec_cesta,3);
@@ -74,11 +75,12 @@ function [] = Vykreslovanie_simulacia(riadok_cesta,stlpec_cesta,pozicia1,pozicia
         prostredie(pozicia1(1,1),pozicia1(1,2),3) = 0;
         
         % Zobrazenie prostredia 
-        figure(1)
         % I = imshow(uint8(prostredie));
         hold on
-        x=imresize(uint8(prostredie),([700 700]));
-        imshow(x);
+%         x=imresize(uint8(prostredie),([700 700]));
+%         imshow(x);
+%         image(imrotate(prostredie,180));
+        image(imrotate(flip(prostredie,2),180));
     end
 
 end

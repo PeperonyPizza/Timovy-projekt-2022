@@ -16,7 +16,7 @@ trasa_num = 2;      %vyber mapy: 1 = stvorec
 [riadok_cesta,stlpec_cesta] = size(cesta);
 
 %% %%%%%%%%%%%%%%%%%   NASTAVENIE POČTU AUTÍČOK  %%%%%%%%%%%%%%%%%%%%%%%%%%                    
-pocet_vozidiel = 1;        %(1 alebo 2)
+pocet_vozidiel = 2;        %(1 alebo 2)
 
 %% %%%%%%%%%%%%%%%%%%%   ZOBRAZENIE ANIMACIE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
 animacia = 1;       %(0 - zastavene, 1 - pustene)
@@ -56,17 +56,22 @@ end
 %=========================================================================>
 %                      VYTVORENIE MATIC W1,W2,W3
 %=========================================================================>
-W1 = []; W2 = []; W3 = [];  
-for j = 10:10:100   % W1 => (10x9 = 90)                              
-    W1(end+1,:) = Pop(1,j-9:j);
-end
-for j = 101:10:200  % W2 => (10x10 = 100)
-    W2(end+1,:) = Pop(1,j-9:j);
-end
-for j = 201:10:210  % W3 => (1x10 = 10)
-    W3(end+1,:) = Pop(1,j-9:j);
-end
-
+        W11 = []; W12 = []; W2 = []; W3 = [];    
+            
+        for j = 10:10:200                             
+            W11(end+1,:) = Pop(j-9:j);          
+        end       
+        % W2 => (10x10 = 100)
+        for j = 201:24:680            
+            W12(end+1,:) = Pop(j-23:j);               
+        end      
+        for j = 681:20:880
+            W2(end+1,:) = Pop(j-19:j);              
+        end       
+        % W3 => (1x10 = 10)
+        for j = 881:10:890
+            W3(end+1,:) = Pop(j-9:j);     
+        end
 %% Pohyb vozidiel/prekážok       
 kolizia_vozidiel = 0;
 
@@ -153,8 +158,33 @@ for k = 1:kroky
         lidar_16_predne_1(end+1) = predosla_zmena;    
         lidar_16_predne_1 = lidar_16_predne_1';
         
+         stupne_pre_kameru=orientacia_na_stupne(orientacia_1);
+            try
+                %ziskane obrazu ako vstup pre NS
+                neuro_imput_image=rotacia_obrazu_v1_BW(cesta,[pozicia(2),pozicia(1)], stupne_pre_kameru, 5,0);
+                if sum(size(neuro_imput_image))~=10
+                      neuro_imput_image = ones([4 6])*255;
+                end
+            catch
+                neuro_imput_image = ones([4 6])*255;
+            end
+            
+            neuro_image_vector=[];            
+            
+            %[rows_im,collums_im]=size(neuro_imput_image);
+            
+            %vektor vstupov z obrazu pre NS
+            for placement=1:size(neuro_imput_image,1)
+                neuro_image_vector=[neuro_image_vector neuro_imput_image(placement,:)];
+            end
+            
+            %uistenie sa ci vstupuje spravny vektor do NS
+            if size(neuro_image_vector)<24
+                neuro_image_vector=ones(1,24)*255;
+            end
+        
         %NS - VRACIA NOVÚ HODNOTU ZMENY ŽIADANÉHO NATOČENIA
-        natocenie_1 = neuronova_siet(W1,W2,W3,lidar_16_predne_1);
+        natocenie_1 = neuronova_siet(W11,W12,W2,W3,lidar_16_predne_1,(neuro_image_vector)');
 
         %VYPOČÍTA SA NATOČENIE VOZIDLA NA ZÁKLADE ZMENY NATOČENIA
         orientacia_1 = aktualizacia_orientacia(natocenie_1,orientacia_1);
@@ -195,9 +225,38 @@ for k = 1:kroky
         end
         lidar_16_predne(end+1) = predosla_zmena;
         lidar_16_predne = lidar_16_predne';
+           
+        %%
+            %%% Synteticka kamera
+            %vypocet stupnov s hodnoty natocennia
+            stupne_pre_kameru=orientacia_na_stupne(orientacia_2);
+            try
+                %ziskane obrazu ako vstup pre NS
+                neuro_imput_image=rotacia_obrazu_v1_BW(cesta,[pozicia(2),pozicia(1)], stupne_pre_kameru, 5,0);
+                if sum(size(neuro_imput_image))~=10
+                      neuro_imput_image = ones([4 6])*255;
+                end
+            catch
+                neuro_imput_image = ones([4 6])*255;
+            end
+            
+            neuro_image_vector=[];            
+            
+            %[rows_im,collums_im]=size(neuro_imput_image);
+            
+            %vektor vstupov z obrazu pre NS
+            for placement=1:size(neuro_imput_image,1)
+                neuro_image_vector=[neuro_image_vector neuro_imput_image(placement,:)];
+            end
+            
+            %uistenie sa ci vstupuje spravny vektor do NS
+            if size(neuro_image_vector)<24
+                neuro_image_vector=ones(1,24)*255;
+            end
+%%            
             
         %NS - VRACIA NOVÚ HODNOTU ZMENY ŽIADANÉHO NATOČENIA
-        natocenie_2 = neuronova_siet(W1,W2,W3,lidar_16_predne);
+        natocenie_2 = neuronova_siet(W11,W12,W2,W3,lidar_16_predne,(neuro_image_vector)');
 
         %VYPOČÍTA SA NATOČENIE VOZIDLA NA ZÁKLADE ZMENY NATOČENIA
         orientacia_2 = aktualizacia_orientacia(natocenie_2,orientacia_2);
@@ -224,9 +283,26 @@ for k = 1:kroky
     %                          ANIMACIA POHYBU
     %=====================================================================>
     %TRAJEKTÓRIA SA PRE KAŽDÉ VOZIDLO VYKRESLUJE ZVLÁŠŤ
+    figure(1)
+    tiledlayout(2,2);
     if animacia == 1
+        nexttile([2,1]);        
         Vykreslovanie_simulacia(riadok_cesta,stlpec_cesta,pozicia_1,pozicia_2,draha_1,start,cesta,checkpoints,pocet_vozidiel)
+        title('Mapa')
+        axis off;
+
+        nexttile;
+        
+        image(dash_cam(start,cesta,checkpoints, pozicia_1, orientacia_na_stupne(orientacia_1)))
+        title('Vozidlo 1')
+        axis off;
+        nexttile;
+        
+        image(dash_cam(start,cesta,checkpoints, pozicia_2, orientacia_na_stupne(orientacia_2)))
+        title('Vozidlo 2')
+        axis off;
     end
+    pause(0.01)
 
     %KONTROLA KOLIZIE S PREKÁŽKAMI
     if prekazky_zapnute == 1

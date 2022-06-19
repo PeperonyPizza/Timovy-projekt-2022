@@ -1,30 +1,24 @@
 function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,sumpokuta_cyklus,sumpokuta_vzdialenost_od_cp,summensia_vzdialenost,sumprejdenie_cp,sumpokuta_obraz] = simulacia_jazdy_pokuty(Pop,prekazky_zapnute,riadok_cesta,stlpec_cesta,kroky,predchadzajuce_kroky,start,cesta,checkpoints,prekazky,min_pp,i)
         %% PREKAZKY - INICIALIZOVANIE PREKÁŽOK
-%         if mod(gen,20) == 0
-%             [start,cesta] = vyber_trasy(trasa_num);
-%         end
-        if prekazky_zapnute == 1
-            trasa_prekazky = zeros(150,150);
-            new_pohybujuce_prekazky = prekazky;
-            kolizie_s_prekazkamy = 0;
-        end
 
         %% Vytvorenie váh pre NS (z najlepšieho jedinca natrenovanej populacie)
         %=====================================================================>
         %                      VYTVORENIE MATIC W1,W2,W3
         %=====================================================================>
-        W1 = []; W2 = []; W3 = [];    
+        W11 = []; W12 = []; W2 = []; W3 = [];    
             
-        %24 vstup 20 prva vrstva 10 druha vrstva 1 výstupná vrstva
-        for j = 24:24:480                             
-            W1(end+1,:) = Pop(j-23:j);          
+        for j = 10:10:200                             
+            W11(end+1,:) = Pop(j-9:j);          
         end       
-
-        for j = 481:20:680
+        % W2 => (10x10 = 100)
+        for j = 201:24:680            
+            W12(end+1,:) = Pop(j-23:j);               
+        end      
+        for j = 681:20:880
             W2(end+1,:) = Pop(j-19:j);              
         end       
-       
-        for j = 681:10:690
+        % W3 => (1x10 = 10)
+        for j = 881:10:890
             W3(end+1,:) = Pop(j-9:j);     
         end
 
@@ -37,7 +31,6 @@ function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,su
                             % smer po uhlopriečkach: 2,6,10,14
                             % ostatne - medzi uhloprieckou a osou: 1,3,5,7,9,11,13,15
         predosla_zmena = 0;
-        pokuta_obraz = 0;
         pp = 0;             % pokutovanie
 
         checkpoint_pomoc = 4; % checkpoint ma dĺžku 8 pixelov (pri výpočte sa počíta z jeho stredom)
@@ -63,7 +56,6 @@ function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,su
             sumpokuta_obraz=zeros(kroky);
             sumpp=zeros(kroky);
             
-                      mensia_vzdialenost = +5000;
 
         %=================================================================>
         %                       SPUSTENIE ROBOTA
@@ -85,8 +77,18 @@ function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,su
             predosla_orientacia = orientacia;
             % ukladanie trajektorie pre vykreslenie
             draha(pozicia(1,1),pozicia(1,2)) = draha(pozicia(1,1),pozicia(1,2)) + 1;
-             
-
+            
+            %ZÍSKANIE HODNôT Z LIDARU
+            [lidar_16] = kontrola_snimacov(pozicia,cesta,orientacia);
+            prvy = 1;
+            %DO NS VSTUPUJÚ LEN LÚČE Z PREDNEJ ČASTI VOZIDLA (9 LÚČOV)
+            lidar_16_predne = 0;
+            for in = 1:9
+                lidar_16_predne(in) = lidar_16(prvy);
+                prvy = prvy+1;
+            end
+            lidar_16_predne(end+1) = predosla_zmena;
+            lidar_16_predne = lidar_16_predne';
             
 %%
             %%% Synteticka kamera
@@ -119,7 +121,7 @@ function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,su
             
             
             %NS - VRACIA NOVÚ HODNOTU ZMENY ŽIADANÉHO NATOČENIA
-            natocenie = neuronova_siet(W1,W2,W3,(neuro_image_vector)');
+            natocenie = neuronova_siet(W11,W12,W2,W3,lidar_16_predne,(neuro_image_vector)');
 
 
             %VYPOČÍTA SA NATOČENIE VOZIDLA NA ZÁKLADE ZMENY NATOČENIA
@@ -137,7 +139,15 @@ function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,su
             %=============================================================>
             %                       POKUTOVANIE
             %=============================================================>
-          %% POKUTOVANIE VYBOČENIA VOZIDLA Z DRÁHY
+            %% POKUTOVANIE VYBOČENIA VOZIDLA Z DRÁHY
+            if cesta(pozicia(1,1),pozicia(1,2)) == 1
+                pokuta_vybocenie = 75000;
+            else
+                pokuta_vybocenie = -0.1; %ODMENA AK NEVYBOČÍ
+            end
+            
+
+ %% POKUTOVANIE VYBOČENIA VOZIDLA Z DRÁHY
             if cesta(pozicia(1,1),pozicia(1,2)) == 1
                 pokuta_vybocenie = 10000+pokuta_vybocenie;
             else
@@ -147,7 +157,7 @@ function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,su
             %% POKUTOVANIE ZA ZACYKLENIE
             pokuta_cyklus = 0;
             prejdenie_cp = 0;
-            mensia_vzdialenost = +5000;
+            mensia_vzdialenost = +25000;
             %pokuta ak sa zacykli
             for j = 1:length(predchadzajuce_kroky)
                 if (predchadzajuce_kroky(1,j) == pozicia(1,1)) && (predchadzajuce_kroky(2,j) == pozicia(1,2))
@@ -162,6 +172,9 @@ function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,su
             % uloženie aktuálnej polohy do predchadzajuce_kroky
             predchadzajuce_kroky(1,length(predchadzajuce_kroky)) = pozicia(1,1);
             predchadzajuce_kroky(2,length(predchadzajuce_kroky)) = pozicia(1,2);
+            
+            mensia_vzdialenost = +5000;
+
             
             %% ODMEŇOVANIE ZA PRIBLÍŽENIE K CHECKPOINTU
             % výpočet vzdialenosti od checkpointu
@@ -220,7 +233,7 @@ function [Fit,best_pozicia,best_draha,Pop,sumpp,sumpokuta,sumpokuta_vybocenie,su
 
 
             %% VÝSLEDNÉ SPOČÍTANIE POKÚT
-            pp = 1000 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + (pokuta_vzdialenost_od_cp) + mensia_vzdialenost - (prejdenie_cp * 10000) +pokuta_obraz;
+            pp = 1000 + pp + pokuta + pokuta_vybocenie + pokuta_cyklus + (pokuta_vzdialenost_od_cp) + mensia_vzdialenost - (prejdenie_cp * 10000) ;
             
             sumpp(k) = pp;
             sumpokuta(k) = pokuta;
